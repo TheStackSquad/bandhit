@@ -40,3 +40,29 @@ export const signUpSchema = Yup.object().shape({
     .oneOf(['newsletter', 'friend', 'internet', 'youtube', 'ads'], 'Please select how you heard about us')
     .required('Please select how you heard about us')
 });
+
+export const socialSignUpSchema = Yup.object().shape({
+  name: Yup.string()
+    .min(2, 'Name must be at least 2 characters')
+    .max(50, 'Name is too long')
+    .required('Name is required'),
+  email: Yup.string()
+    .email('Invalid email')
+    .required('Email is required'),
+  socialProvider: Yup.string()
+    .oneOf(['google', 'facebook', 'twitter', 'linkedin'], 'Invalid provider')
+    .required('Provider is required'),
+  providerId: Yup.string()
+    .required('Provider ID is required'),
+  // Optional fields for social signup
+  phoneNumber: Yup.string()
+    .matches(/^[0-9]{10}$/, 'Invalid phone number'),
+  city: Yup.string(),
+  isAdult: Yup.boolean(),
+  referralSource: Yup.string()
+    .oneOf(['newsletter', 'friend', 'internet', 'youtube', 'ads'])
+});
+
+export const emailSchema = Yup.string()
+  .email("Invalid email address")
+  .required("Email is required");

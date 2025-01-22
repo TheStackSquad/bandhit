@@ -1,4 +1,5 @@
 // src/components/ui/card.jsx
+'use client'
 import * as React from "react"
 import { cn } from "@/utils/classNameUtils"
 
@@ -30,7 +31,7 @@ CardHeader.displayName = "CardHeader"
 
 // The CardTitle component applies proper typography scaling and weight to create
 // visual hierarchy within the card.
-const CardTitle = React.forwardRef(({ className, ...props }, ref) => (
+const CardTitle = React.forwardRef(({ className, children, ...props }, ref) => (
   <h3
     ref={ref}
     className={cn(
@@ -38,9 +39,13 @@ const CardTitle = React.forwardRef(({ className, ...props }, ref) => (
       className
     )}
     {...props}
-  />
-))
-CardTitle.displayName = "CardTitle"
+  >
+    {children || "Default Title"}
+  </h3>
+));
+
+CardTitle.displayName = "CardTitle";
+
 
 // The CardDescription component uses muted colors and appropriate font sizing
 // for secondary text content within the card.

@@ -1,5 +1,6 @@
 // src/reduxStore/reducers/authReducer.js
-import { SIGN_IN, SIGN_OUT } from '../constants/actionTypes';
+import { SIGN_IN,
+  SIGN_OUT } from '@/reduxStore/constants/actionTypes';
 
 const initialState = {
   user: null,

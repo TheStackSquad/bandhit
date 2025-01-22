@@ -19,8 +19,10 @@ const carouselImages = [
 
 const CategoryUI = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  //eslint-disable-next-line
   const [isHovered, setIsHovered] = useState(false);
   const [mounted, setMounted] = useState(false);
+    //eslint-disable-next-line
   const [likes, setLikes] = useState({});
 
   // Prevent hydration mismatch
@@ -40,6 +42,7 @@ const CategoryUI = () => {
     }
   }, [mounted, isHovered, nextSlide]);
 
+    //eslint-disable-next-line
   const handleLike = (index) => {
     setLikes((prev) => ({
       ...prev,

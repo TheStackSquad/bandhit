@@ -3,7 +3,7 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/utils/dbConnect';
 import User from '@/schemas/models/User';
-import { generateToken } from '@/utils/tokenManager';
+import {generateTokens } from '@/utils/tokenManager';
 import bcrypt from 'bcryptjs';
 
 export async function POST(request) {
@@ -13,7 +13,7 @@ export async function POST(request) {
     const { email, password } = await request.json();
 
     const user = await User.findOne({ email }).select('+password');
-    
+    const role = user?.role || 'user'; 
     if (!user) {
       return NextResponse.json(
         { message: 'Invalid credentials' },
@@ -30,11 +30,12 @@ export async function POST(request) {
       );
     }
 
-    const token = generateToken(user._id);
+    const token = generateTokens(user._id, role);
     
     // Create a user object without the password
     const userWithoutPassword = {
       _id: user._id,
+      role: role,
       email: user.email,
       name: user.name,
       // Add other user fields as needed
@@ -46,6 +47,7 @@ export async function POST(request) {
     }, { status: 200 });
 
   } catch (error) {
+    console.error('Error in signup route:', error);
     return NextResponse.json(
       { message: 'Internal server error' },
       { status: 500 }

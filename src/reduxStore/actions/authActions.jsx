@@ -1,5 +1,6 @@
 // src/reduxStore/actions/authActions.js
-import { SIGN_IN, SIGN_OUT } from '../constants/actionTypes';
+import { SIGN_IN,
+  SIGN_OUT } from '@/reduxStore/constants/actionTypes';
 
 export const signIn = (user) => ({
   type: SIGN_IN,
