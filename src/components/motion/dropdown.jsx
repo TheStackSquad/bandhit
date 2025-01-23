@@ -94,7 +94,7 @@ export default function Dropdown() {
       <Link 
         href={href} 
         className="flex items-center gap-2 w-full"
-        onClick={handleItemClick}
+        onClick={handleItemClick} // Close dropdown on click
       >
         <Icon size={18} /> {label}
       </Link>

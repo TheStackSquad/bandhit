@@ -3,10 +3,10 @@
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Heart, ShoppingCart } from "lucide-react";
 import Link from 'next/link';
-import { eventsData } from "@/components/data/eventsData"; // Import the events data
+import { upcomingEventsData } from "@/components/data/eventsData"; // Import the events data
 import Image from "next/image";
 
-const carouselAssets = Object.keys(eventsData);
+const carouselAssets = Object.keys( upcomingEventsData);
 
 export default function EventCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -39,7 +39,7 @@ export default function EventCarousel() {
   };
 
   const currentAsset = carouselAssets[currentIndex];
-  const currentEvent = eventsData[currentAsset];
+  const currentEvent = upcomingEventsData[currentAsset];
 
   return (
     <div className={` eventsUI grid grid-cols-1 lg:grid-cols-2 gap-8 p-8 bg-gray-50`}>
@@ -52,7 +52,7 @@ export default function EventCarousel() {
         <div className="relative overflow-hidden rounded-lg shadow-md">
           <div className="relative w-full h-[400px]">
             <Image
-              src={`/uploads/carouselAsset/${currentAsset}`}
+              src={`/uploads/events/${currentAsset}`}
               alt={`${currentEvent.name}`}
               className="object-cover transition-transform duration-300"
               fill
