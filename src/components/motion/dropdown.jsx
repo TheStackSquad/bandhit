@@ -51,12 +51,12 @@ const navItems = [
 ];
 
 const nestedNavItems = [
-  { href: "/vendors", icon: Store, label: "Vendors" },
+  { href: "/hub", icon: Store, label: "Vendors" },
   { href: "/entertainers", icon: Mic, label: "Entertainers" },
 ];
 
 const footerNavItems = [
-  { href: "/about", icon: Info, label: "About Us" },
+  { href: "/about-us", icon: Info, label: "About Us" },
   { href: "/contact", icon: Phone, label: "Contact Us" },
 ];
 

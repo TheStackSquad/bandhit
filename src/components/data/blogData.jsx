@@ -111,7 +111,7 @@ const blogData = [
         upvotes: 52,
         "author": "Emily Carter",
         "image": "/uploads/images/image7.webp",
-        "coverImage": "/public/uploads/carouselAsset/download (1).jpg",
+        "coverImage": "/uploads/carouselAsset/download (1).jpg",
         "date": "2024-08-15"
     },
     {
