@@ -8,7 +8,6 @@ import ErrorBoundary from '@/app/errorBoundary';
 import { PerformanceWrapper } from '@/utils/debugLibrary/performanceWrapper';
 import { SafeHydration } from '@/components/SafeHydration';
 import { ToastContainer } from '@/utils/alertManager';
-import GlobalLoader from '@/components/UI/GlobalLoader';
 
 export default function Providers({ children }) {
   return (
@@ -19,7 +18,6 @@ export default function Providers({ children }) {
             <PersistGate loading={null} persistor={persistor}>
               <ToastContainer />
               <LazyMotion features={domAnimation}>
-              <GlobalLoader />
                 {children}
               </LazyMotion>
             </PersistGate>

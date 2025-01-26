@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Ticket } from 'lucide-react';
 import Link from 'next/link';
-import BlogCard from './BlogCard';
+import BlogCard from '@/components/UI/blogCard';
 import blogData from '@/components/data/blogData';
 
 const categories = [
