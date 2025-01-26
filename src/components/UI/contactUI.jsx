@@ -22,7 +22,7 @@ const ContactUI = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Implement form submission logic
-    console.log('Form submitted:', formData);
+  //  console.log('Form submitted:', formData);
   };
 
   return (

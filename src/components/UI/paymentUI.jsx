@@ -19,9 +19,10 @@ export default function PaymentUI() {
     },
     validationSchema: paymentSchema,
     validateOnChange: true,
+    //eslint-disable-next-line
     onSubmit: (values) => {
       // Handle form submission
-      console.log('Form Submitted', values);
+ //     console.log('Form Submitted', values);
     },
   });
 

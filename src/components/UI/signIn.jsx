@@ -38,7 +38,7 @@ const SignIn = () => {
         showError(data.message || 'Sign in failed');
       }
     } catch (error) {
-      console.log('error occured in signin:', error);
+      console.error('error occured in signin:', error);
       showError('An error occurred during sign in');
     } finally {
       setIsLoading(false);
