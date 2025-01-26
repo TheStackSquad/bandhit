@@ -19,6 +19,7 @@ import {
   Users,
   Store,
   Mic,
+  UserRoundPen,
 } from "lucide-react";
 
 // React hooks
@@ -51,6 +52,7 @@ const navItems = [
 ];
 
 const nestedNavItems = [
+  { href: "/profile", icon: UserRoundPen, label: "Profile" },
   { href: "/hub", icon: Store, label: "Vendors" },
   { href: "/entertainers", icon: Mic, label: "Entertainers" },
 ];

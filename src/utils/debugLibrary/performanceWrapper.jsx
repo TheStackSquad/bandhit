@@ -29,6 +29,7 @@ export function PerformanceWrapper({ id, children }) {
       : [];
 
     // Create performance data object
+      //eslint-disable-next-line
     const performanceData = {
       component: id,
       phase,
@@ -42,7 +43,7 @@ export function PerformanceWrapper({ id, children }) {
 
     // Safe logging
     try {
-      console.debug(performanceData);
+   //   console.debug(performanceData);
 
       // Analytics sending (when enabled)
       if (process.env.NEXT_PUBLIC_ENABLE_PERFORMANCE_MONITORING === 'true') {

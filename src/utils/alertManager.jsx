@@ -1,4 +1,4 @@
-//src/utils/alertManager.tsx
+//src/utils/alertManager.jsx
 'use client';
 import { toast, ToastContainer as ToastifyContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
