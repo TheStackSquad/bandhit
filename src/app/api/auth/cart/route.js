@@ -2,7 +2,7 @@
 
 import { NextResponse } from 'next/server';
 import dbConnect from '@/utils/dbConnect';
-import CartItems from '@/schemas/models/cart';
+import CartItems from '@/schemas/models/Cart';
 import { verifyToken } from '@/utils/tokenManager';
 
 // Connect to the database
