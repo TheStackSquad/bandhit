@@ -1,81 +1,111 @@
-// src/reduxStore/store.js
+//src/reduxStore/store.jsx
+
 'use client';
+
 import { configureStore } from '@reduxjs/toolkit';
-import { persistStore, persistReducer } from 'redux-persist';
+import { 
+  persistStore, 
+  persistReducer, 
+  FLUSH, 
+  REHYDRATE, 
+  PAUSE, 
+  PERSIST, 
+  PURGE, 
+  REGISTER 
+} from 'redux-persist';
 import { createLogger } from 'redux-logger';
 import authReducer from '@/reduxStore/reducers/authReducers';
 import cartReducer from '@/reduxStore/reducers/cartReducer';
 
-// Custom storage implementation for Next.js
+// We need to dynamically import storage for Next.js client-side only
+let storage;
+
+// Custom storage implementation for SSR compatibility
 const createNoopStorage = () => {
   return {
-    //eslint-disable-next-line
-    getItem(_key) {
-      return Promise.resolve(null);
-    },
-    setItem(_key, value) {
-      return Promise.resolve(value);
-    },
-     //eslint-disable-next-line
-    removeItem(_key) {
-      return Promise.resolve();
-    },
+    getItem: () => Promise.resolve(null),
+    setItem: (key, item) => Promise.resolve(item),
+    removeItem: () => Promise.resolve()
   };
 };
 
-const storage = typeof window !== 'undefined' 
-  ? require('redux-persist/lib/storage').default 
-  : createNoopStorage();
+// Initialize storage based on environment
+if (typeof window !== 'undefined') {
+  storage = require('redux-persist/lib/storage').default;
+} else {
+  storage = createNoopStorage();
+}
 
+// Redux action types for logging
+const WATCHED_ACTIONS = {
+  UPDATE_USER_IMAGE_SUCCESS: 'UPDATE_USER_IMAGE_SUCCESS',
+  SIGN_IN: 'SIGN_IN'
+};
+
+// Persistence configurations
 const authPersistConfig = {
   key: 'auth',
   storage,
   whitelist: ['user', 'isAuthenticated'],
+  debug: process.env.NODE_ENV !== 'production'
 };
 
 const cartPersistConfig = {
   key: 'cart',
   storage,
-  whitelist: ['items', 'totalAmount'], // Adjust based on your cart state structure
+  whitelist: ['items', 'totalAmount']
 };
 
-const createStore = () => {
+// Redux logger configuration
+const createReduxLogger = () => {
+  return createLogger({ 
+    collapsed: true,
+    predicate: (getState, action) => {
+      return action.type === WATCHED_ACTIONS.UPDATE_USER_IMAGE_SUCCESS || 
+             action.type === WATCHED_ACTIONS.SIGN_IN;
+    }
+  });
+};
+
+// Middleware configuration
+const getMiddleware = () => {
   const middleware = [];
 
   if (process.env.NODE_ENV !== 'production' && typeof window !== 'undefined') {
-    middleware.push(createLogger({ collapsed: true }));
+    middleware.push(createReduxLogger());
   }
 
+  return middleware;
+};
+
+// Create store with all configurations
+const createStore = () => {
   return configureStore({
     reducer: {
       auth: persistReducer(authPersistConfig, authReducer),
-      cart: persistReducer(cartPersistConfig, cartReducer),
+      cart: persistReducer(cartPersistConfig, cartReducer)
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
         serializableCheck: {
-          ignoredActions: [
-            'persist/PERSIST',
-            'persist/REHYDRATE',
-            'persist/REGISTER',
-          ],
+          ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER]
         },
-      }).concat(middleware),
-    devTools: process.env.NODE_ENV !== 'production',
+      }).concat(getMiddleware()),
+    devTools: process.env.NODE_ENV !== 'production'
   });
 };
 
-// Initialize store with type checking
-let store;
+// Store singleton initialization
+let store = null;
+let persistor = null;
 
+// Ensure store is only created on client side
 if (typeof window !== 'undefined') {
   store = createStore();
-} else {
-  store = createStore(); // Create a store with noop storage for SSR
+  persistor = persistStore(store);
 }
 
-export { store };
-export const persistor = typeof window !== 'undefined' ? persistStore(store) : null;
+export { store, persistor };
 
-// Add a helper to check if we're on client side
+// Helper function to check if we're on client side
 export const isClient = typeof window !== 'undefined';

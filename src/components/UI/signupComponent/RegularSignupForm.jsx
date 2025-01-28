@@ -34,7 +34,7 @@ const RegularSignUpForm = () => {
         const response = await signUp(values);
         showSuccess(response.message); // Show success message
         resetForm(); // Clear the form fields
-        router.push("/events"); // Redirect to another page
+        router.push("/signin"); // Redirect to another page
       } catch (error) {
         showError(error.response?.data?.message || "Signup failed");
       } finally {
@@ -44,7 +44,7 @@ const RegularSignUpForm = () => {
   });
 
   return (
-    <form onSubmit={formik.handleSubmit} className="space-y-4">
+    <form onSubmit={formik.handleSubmit} className="space-y-4 mt-3">
       <FormFields
         values={formik.values}
         handleChange={formik.handleChange}

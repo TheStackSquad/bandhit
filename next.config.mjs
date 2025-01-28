@@ -1,9 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+
+  // Image optimizations
   images: {
-    formats: ["image/webp"],
+    domains: ["res.cloudinary.com"], // Trusted domains
+    formats: ["image/avif", "image/webp"], // Supported formats
+    minimumCacheTTL: 60, // Cache images for 60 seconds
   },
+
+  // Custom headers for caching
   headers: async () => [
     {
       source: "/(.*)",

@@ -3,10 +3,12 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { signIn } from '@/reduxStore/actions/authActions';
 import { Mail, Lock } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { showSuccess, showError } from '@/utils/alertManager';
 import Link from 'next/link';
 
 const SignIn = () => {
+  const router = useRouter();
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     email: '',
@@ -21,29 +23,56 @@ const SignIn = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-
+  
     try {
       const response = await fetch('/api/auth/signin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
-
+  
       const data = await response.json();
-
+  
       if (response.ok) {
-        dispatch(signIn(data.user));
+        const { _id, role, email, name, phone, city, accessToken, refreshToken } = data;
+  
+        // Create a flattened user object for Redux
+        const userPayload = {
+          _id,
+          role,
+          email,
+          name,
+          phone,
+          city,
+          accessToken,
+          refreshToken,
+          isAuthenticated: true, // Mark the user as authenticated
+        };
+
+        // Save to localStorage
+        localStorage.setItem('auth', JSON.stringify(userPayload));
+        
+  
+        // Dispatch sign-in action with the userPayload
+        dispatch(signIn(userPayload));
         showSuccess('Successfully signed in!');
+  
+        // Clear form fields
+        setFormData({ email: '', password: '' });
+  
+        // Redirect to /events
+        router.push('/events');
       } else {
         showError(data.message || 'Sign in failed');
       }
     } catch (error) {
-      console.error('error occured in signin:', error);
+      console.error('Error occurred in sign-in:', error);
       showError('An error occurred during sign in');
     } finally {
       setIsLoading(false);
     }
   };
+  
 
   const isFormValid = formData.email && formData.password;
 
