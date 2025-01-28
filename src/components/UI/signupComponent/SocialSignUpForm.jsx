@@ -1,29 +1,67 @@
 //src/components/UI/signupComponent/SocialSignUpForm.jsx
-// src/components/UI/signupComponent/SocialSignUpForm.jsx
+
 'use client';
 
 import React from 'react';
-import { FaGoogle, FaFacebookF, FaTwitter, FaInstagram } from 'react-icons/fa';
 
 const SOCIAL_BUTTONS = [
-  { name: 'Google', icon: <FaGoogle className="text-white text-xl" />, bgColor: 'bg-red-500' },
-  { name: 'Facebook', icon: <FaFacebookF className="text-white text-xl" />, bgColor: 'bg-blue-600' },
-  { name: 'Twitter', icon: <FaTwitter className="text-white text-xl" />, bgColor: 'bg-blue-400' },
-  { name: 'Instagram', icon: <FaInstagram className="text-white text-xl" />, bgColor: 'bg-pink-500' },
+  { name: 'Twitter', icon: '𝕏', bgColor: 'bg-black' },
+  { name: 'Facebook', icon: 'f', bgColor: 'bg-blue-600' },
+  { name: 'LinkedIn', icon: 'in', bgColor: 'bg-blue-700' },
+  { name: 'Gmail', icon: 'G', bgColor: 'bg-red-700' },
 ];
 
 const SocialSignUpForm = () => {
+ 
   return (
-    <div className="space-y-4 w-full max-w-md mx-auto">
-      {SOCIAL_BUTTONS.map(({ name, icon, bgColor }) => (
-        <button
-          key={name}
-          className={`w-full flex items-center justify-center p-4 rounded-lg ${bgColor} hover:opacity-90 transition-opacity`}
-        >
-          <span className="mr-3">{icon}</span>
-          <span className="text-white font-medium">Sign up with {name}</span>
-        </button>
-      ))}
+    <div className="w-full bg-blue max-w-md mx-auto">
+      {/* Container for the buttons with responsive grid/flex layout */}
+      <div className="grid grid-cols-2 gap-4 md:flex md:flex-col">
+        {SOCIAL_BUTTONS.map(({ name, icon, bgColor }) => (
+          <button
+            key={name}
+            // Base styles
+            className={`
+              ${bgColor}
+              w-full
+              rounded-full
+              px-3
+              py-3
+              text-white 
+              font-medium
+              
+              // Stack icon and text on all screen sizes
+              flex
+              flex-col
+              items-center
+              gap-2
+              
+              // Hover and focus states
+              hover:opacity-90
+              focus:outline-none
+              focus:ring-2
+              focus:ring-offset-2
+              focus:ring-blue-500
+              
+              // Shadow to make it appear elevated
+              shadow-lg
+              
+              // Animation for click effect
+              transition-all
+              duration-200
+              active:transform
+              active:scale-95
+              active:shadow-md
+            `}
+          >
+            {/* Icon with larger size */}
+            <span className="text-xl">{icon}</span>
+            
+            {/* Button text */}
+            <span>{name}</span>
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

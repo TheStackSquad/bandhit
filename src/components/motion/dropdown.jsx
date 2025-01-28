@@ -1,11 +1,9 @@
+//src/components/motion/dropdown.jsx
 "use client";
 
-// External library imports
 import { motion, AnimatePresence } from "framer-motion";
 import { useSelector } from "react-redux";
 import Link from "next/link";
-
-// Icon imports
 import {
   Bookmark,
   Calendar,
@@ -21,11 +19,9 @@ import {
   Mic,
   UserRoundPen,
 } from "lucide-react";
-
-// React hooks
 import { useEffect, useRef, useState } from "react";
 
-// Animation variants
+// Modified animation variants for vertical staggering
 const dropdownVariants = {
   hidden: { opacity: 0, y: -10 },
   show: {
@@ -37,12 +33,12 @@ const dropdownVariants = {
   },
 };
 
+// Changed x animation to y for vertical staggering
 const itemVariants = {
-  hidden: { opacity: 0, x: -20 },
-  show: { opacity: 1, x: 0 },
+  hidden: { opacity: 0, y: -10 },
+  show: { opacity: 1, y: 0 },
 };
 
-// Navigation items configuration
 const navItems = [
   { href: "/", icon: HomeIcon, label: "Home" },
   { href: "/events", icon: Calendar, label: "Events" },
@@ -91,12 +87,12 @@ export default function Dropdown() {
     <motion.li 
       key={href}
       variants={itemVariants} 
-      className="flex items-center gap-2 p-2 rounded-md hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200"
+      className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-100 transition-colors duration-200"
     >
       <Link 
         href={href} 
-        className="flex items-center gap-2 w-full"
-        onClick={handleItemClick} // Close dropdown on click
+        className="flex items-center gap-2 w-full text-gray-700 hover:text-blue-600"
+        onClick={handleItemClick}
       >
         <Icon size={18} /> {label}
       </Link>
@@ -139,21 +135,24 @@ export default function Dropdown() {
             animate="show"
             exit="hidden"
             variants={dropdownVariants}
-            className="absolute right-0 w-56 p-2 mt-3 bg-white rounded-lg shadow-lg z-50"
+            className="absolute right-0 w-56 p-2 mt-3 bg-white rounded-lg shadow-lg z-50 max-h-[calc(100vh-80px)] overflow-y-auto"
           >
             {navItems.map(renderNavItem)}
 
             <motion.li
               variants={itemVariants}
-              className="relative flex items-center gap-2 p-2 rounded-md hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200"
-              onMouseEnter={() => setNestedOpen(true)}
-              onMouseLeave={() => setNestedOpen(false)}
+              className="relative flex items-center gap-2 p-2 rounded-md hover:bg-gray-100 transition-colors duration-200"
+              onClick={() => setNestedOpen(!nestedOpen)}
             >
-              <Users size={18} /> For Vendors/Entertainers
-              <ChevronDown
-                className={`ml-auto transition-transform duration-200 ${nestedOpen ? "rotate-180" : ""}`}
-                size={18}
-              />
+              <div className="flex items-center gap-2 w-full text-gray-700 hover:text-blue-600 cursor-pointer">
+                <Users size={18} /> 
+                <span>For Vendors/Entertainers</span>
+                <ChevronDown
+                  className={`ml-auto transition-transform duration-200 ${nestedOpen ? "rotate-180" : ""}`}
+                  size={18}
+                />
+              </div>
+              
               <AnimatePresence>
                 {nestedOpen && (
                   <motion.ul
@@ -161,7 +160,7 @@ export default function Dropdown() {
                     animate="show"
                     exit="hidden"
                     variants={dropdownVariants}
-                    className="absolute right-full top-0 w-56 p-2 ml-2 bg-white rounded-lg shadow-lg"
+                    className="absolute left-0 w-full mt-2 p-2 bg-gray-200 rounded-lg shadow-lg top-full"
                   >
                     {nestedNavItems.map(renderNavItem)}
                   </motion.ul>

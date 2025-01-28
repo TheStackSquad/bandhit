@@ -1,4 +1,4 @@
-// src/app/profile/page.jsx
+// src/app/dashboard/page.jsx
 'use client';
 
 import { useSelector } from 'react-redux'; // Access Redux state

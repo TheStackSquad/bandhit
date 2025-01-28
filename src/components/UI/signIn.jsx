@@ -1,18 +1,18 @@
 // src/components/UI/signIn.jsx
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { signIn } from '@/reduxStore/actions/authActions';
-import { Mail, Lock } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { showSuccess, showError } from '@/utils/alertManager';
-import Link from 'next/link';
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { signIn } from "@/reduxStore/actions/authActions";
+import { Mail, Lock } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { showSuccess, showError } from "@/utils/alertManager";
+import Link from "next/link";
 
 const SignIn = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -23,19 +23,28 @@ const SignIn = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-  
+
     try {
-      const response = await fetch('/api/auth/signin', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/auth/signin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
-        const { _id, role, email, name, phone, city, accessToken, refreshToken } = data;
-  
+        const {
+          _id,
+          role,
+          email,
+          name,
+          phone,
+          city,
+          accessToken,
+          refreshToken,
+        } = data;
+
         // Create a flattened user object for Redux
         const userPayload = {
           _id,
@@ -50,29 +59,27 @@ const SignIn = () => {
         };
 
         // Save to localStorage
-        localStorage.setItem('auth', JSON.stringify(userPayload));
-        
-  
+        localStorage.setItem("auth", JSON.stringify(userPayload));
+
         // Dispatch sign-in action with the userPayload
         dispatch(signIn(userPayload));
-        showSuccess('Successfully signed in!');
-  
+        showSuccess("Successfully signed in!");
+
         // Clear form fields
-        setFormData({ email: '', password: '' });
-  
+        setFormData({ email: "", password: "" });
+
         // Redirect to /events
-        router.push('/events');
+        router.push("/events");
       } else {
-        showError(data.message || 'Sign in failed');
+        showError(data.message || "Sign in failed");
       }
     } catch (error) {
-      console.error('Error occurred in sign-in:', error);
-      showError('An error occurred during sign in');
+      console.error("Error occurred in sign-in:", error);
+      showError("An error occurred during sign in");
     } finally {
       setIsLoading(false);
     }
   };
-  
 
   const isFormValid = formData.email && formData.password;
 
@@ -80,7 +87,9 @@ const SignIn = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-xl shadow-lg transform transition-all duration-300 hover:shadow-xl">
         <div className="text-center">
-          <h2 className="mt-6 text-3xl font-bold text-gray-900">Sign in to your account</h2>
+          <h2 className="mt-6 text-3xl font-bold text-gray-900">
+            Sign in to your account
+          </h2>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
@@ -125,22 +134,32 @@ const SignIn = () => {
             disabled={!isFormValid || isLoading}
             className={`group relative w-full flex justify-center py-3 px-4 border border-transparent 
                      text-sm font-medium rounded-md text-white 
-                     ${isFormValid && !isLoading ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400'} 
+                     ${
+                       isFormValid && !isLoading
+                         ? "bg-blue-600 hover:bg-blue-700"
+                         : "bg-gray-400"
+                     } 
                      focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 
                      transition-all duration-300`}
           >
-            {isLoading ? 'Signing in...' : 'Sign in'}
+            {isLoading ? "Signing in..." : "Sign in"}
           </button>
 
-          <span className="mt-4 text-sm text-gray-600">
-   Dont have an account? No worries{" "}
-  <Link 
-    href="/signup" 
-    className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
-  >
-    Sign Up
-  </Link>
-</span>
+          <span
+            className="mt-5 mb-3
+      flex items-center
+      justify-center
+      text-sm
+      text-gray-600"
+          >
+            Dont have an account? No worries{" "}
+            <Link
+              href="/signup"
+              className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
+            >
+              Sign Up
+            </Link>
+          </span>
         </form>
       </div>
     </div>

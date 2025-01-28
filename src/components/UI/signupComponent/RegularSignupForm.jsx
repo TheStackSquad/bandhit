@@ -3,6 +3,7 @@
 
 import React, {useState } from 'react';
 import { useFormik } from 'formik';
+import Link from "next/link";
 import { signUpSchema } from '@/schemas/validationSchema/userSchema';
 import { signUp } from '@/API/signup';
 import { showSuccess, showError } from '@/utils/alertManager';
@@ -74,6 +75,20 @@ const RegularSignUpForm = () => {
       >
         {isLoading ? 'Signing Up...' : 'Create Account'}
       </button>
+
+      <span className="mt-5 mb-3
+      flex items-center
+      justify-center
+      text-sm
+      text-gray-600">
+            Already have an account?{" "}
+            <Link
+              href="/signin"
+              className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
+            >
+              Sign In
+            </Link>
+          </span>
     </form>
   );
 };

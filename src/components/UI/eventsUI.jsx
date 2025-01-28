@@ -4,6 +4,9 @@ import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Heart, ShoppingCart } from "lucide-react";
 import Link from 'next/link';
 import { upcomingEventsData } from "@/components/data/eventsData"; // Import the events data
+import { useDispatch, useSelector } from "react-redux";
+import { handleCartSubmit } from "@/utils/eventsUtils";
+
 import Image from "next/image";
 
 const carouselAssets = Object.keys( upcomingEventsData);
@@ -12,6 +15,16 @@ export default function EventCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [likes, setLikes] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const cart = useSelector((state) => state.cart);
+  const token = useSelector((state) => state?.auth?.user?.accesstoken);
+  const dispatch = useDispatch();
+
+
+  const handleAddToCart = () => {
+    handleCartSubmit(currentEvent, token, dispatch);
+  };
+
+  const isItemInCart = cart.items.some((item) => item.id === currentEvent.id);
 
   // Auto-play functionality
   useEffect(() => {
@@ -116,9 +129,20 @@ export default function EventCarousel() {
               <Heart className="w-5 h-5" />
               <span>{likes}</span>
             </button>
-            <button className="p-2 text-white bg-blue-600/80 rounded-md shadow-md hover:bg-blue-700 transition-colors">
-              <ShoppingCart className="w-5 h-5" />
-            </button>
+            <button
+            className={`p-2 rounded-md shadow-md transition-colors ${
+              isItemInCart
+                ? "bg-green-600 hover:bg-green-700"
+                : "bg-blue-600 hover:bg-blue-700"
+            }`}
+            onClick={handleAddToCart}
+          >
+            <ShoppingCart className="w-5 h-5" />
+            <span className="ml-1">
+              {cart.items.length > 0 ? cart.items.length : ""}
+            </span>
+          </button>
+
           </div>
         </div>
 

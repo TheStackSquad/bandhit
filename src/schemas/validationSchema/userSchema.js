@@ -42,7 +42,7 @@ export const signUpSchema = Yup.object().shape({
 });
 
 // Social signup validation
-export const socialSignUpSchema = Yup.object({ // Use 'Yup' consistently here
+export const socialSignUpSchema = Yup.object({
   email: Yup.string().required('Email is required').email('Invalid email format'),
   socialProvider: Yup.string()
     .required('Social provider is required')
