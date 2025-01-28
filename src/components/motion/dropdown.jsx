@@ -52,7 +52,7 @@ const navItems = [
 ];
 
 const nestedNavItems = [
-  { href: "/profile", icon: UserRoundPen, label: "Profile" },
+  { href: "/dashboard", icon: UserRoundPen, label: "Dashboard" },
   { href: "/hub", icon: Store, label: "Vendors" },
   { href: "/entertainers", icon: Mic, label: "Entertainers" },
 ];

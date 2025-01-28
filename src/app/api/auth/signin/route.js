@@ -30,21 +30,23 @@ export async function POST(request) {
       );
     }
 
-    const token = generateTokens(user._id, role);
-    
+    const { accessToken, refreshToken } = generateTokens(user._id, role);
+
     // Create a user object without the password
     const userWithoutPassword = {
       _id: user._id,
       role: role,
       email: user.email,
       name: user.name,
+      phone: user.phoneNumber,
+      city: user.city,
+      accessToken, // Include the token values directly
+      refreshToken, // Include the refresh token directly
       // Add other user fields as needed
     };
-
-    return NextResponse.json({
-      user: userWithoutPassword,
-      token
-    }, { status: 200 });
+    
+    return NextResponse.json(userWithoutPassword, { status: 200 });
+    
 
   } catch (error) {
     console.error('Error in signup route:', error);

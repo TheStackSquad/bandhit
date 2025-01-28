@@ -1,36 +1,29 @@
+//src/components/UI/signupComponent/SocialSignUpForm.jsx
 // src/components/UI/signupComponent/SocialSignUpForm.jsx
-
 'use client';
 
-import React, {useState } from 'react';
-import { showSuccess, showError } from '@/utils/alertManager';
-import { useRouter } from 'next/navigation';
-import { socialSignUp } from '@/API/signup'; // You'll need to implement the socialSignUp API call
-import SocialButton from './SocialButton'; // Create buttons for Google, Facebook, etc.
+import React from 'react';
+import { FaGoogle, FaFacebookF, FaTwitter, FaInstagram } from 'react-icons/fa';
+
+const SOCIAL_BUTTONS = [
+  { name: 'Google', icon: <FaGoogle className="text-white text-xl" />, bgColor: 'bg-red-500' },
+  { name: 'Facebook', icon: <FaFacebookF className="text-white text-xl" />, bgColor: 'bg-blue-600' },
+  { name: 'Twitter', icon: <FaTwitter className="text-white text-xl" />, bgColor: 'bg-blue-400' },
+  { name: 'Instagram', icon: <FaInstagram className="text-white text-xl" />, bgColor: 'bg-pink-500' },
+];
 
 const SocialSignUpForm = () => {
-  const router = useRouter();
-  //eslint-disable-next-line
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleSocialSignUp = async (socialData) => {
-    setIsLoading(true);
-    try {
-      const response = await socialSignUp(socialData); // Send socialData to backend API
-      showSuccess(response.message);
-      router.push("/events");
-    } catch (error) {
-      showError(error.response?.data?.message || "Social signup failed");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
-    <div className="space-y-4">
-      <SocialButton provider="google" onClick={() => handleSocialSignUp({ provider: 'google' })} />
-      <SocialButton provider="facebook" onClick={() => handleSocialSignUp({ provider: 'facebook' })} />
-      <SocialButton provider="linkedin" onClick={() => handleSocialSignUp({ provider: 'linkedin' })} />
+    <div className="space-y-4 w-full max-w-md mx-auto">
+      {SOCIAL_BUTTONS.map(({ name, icon, bgColor }) => (
+        <button
+          key={name}
+          className={`w-full flex items-center justify-center p-4 rounded-lg ${bgColor} hover:opacity-90 transition-opacity`}
+        >
+          <span className="mr-3">{icon}</span>
+          <span className="text-white font-medium">Sign up with {name}</span>
+        </button>
+      ))}
     </div>
   );
 };

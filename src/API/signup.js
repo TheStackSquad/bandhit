@@ -8,8 +8,21 @@ export const signUp = async (values) => {
 };
 
 // Social signup
+
 export const socialSignUp = async (socialData) => {
-  const response = await axios.post("/api/signup/socials", socialData);
-//  console.log('Incoming data Socials Form:', response);
-  return response.data;
+ // console.log('Social Signup Request:', socialData);
+  
+  try {
+    const response = await axios.post("/api/signup/socials", socialData, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    
+   // console.log('Social Signup Response:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Social Signup Error:', error.response?.data || error.message);
+    throw error;
+  }
 };

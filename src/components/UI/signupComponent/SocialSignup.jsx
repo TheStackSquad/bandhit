@@ -59,19 +59,20 @@ const SocialSignUp = () => {
   ];
 
   return (
-    <div className="flex justify-center space-x-4 mb-6">
-      {socialProviders.map(({ provider, icon: Icon, color }) => (
-        <button 
-          key={provider}
-          type="button" 
-          onClick={() => handleSocialSignup(provider)}
-          className="p-3 bg-white border rounded-full hover:bg-gray-100 transition"
-          aria-label={`Sign up with ${provider}`}
-        >
-          <Icon className={`text-2xl ${color}`} />
-        </button>
-      ))}
-    </div>
+    <div className="flex flex-col md:grid md:grid-cols-2 md:gap-4 mb-6">
+    {socialProviders.map(({ provider, icon: Icon, color }) => (
+      <button
+        key={provider}
+        type="button"
+        onClick={() => handleSocialSignup(provider)}
+        className="p-4 bg-white border rounded-full hover:bg-gray-100 transition w-full h-full flex justify-center items-center"
+        aria-label={`Sign up with ${provider}`}
+      >
+        <Icon className={`text-3xl ${color}`} />
+      </button>
+    ))}
+  </div>
+  
   );
 };
 
