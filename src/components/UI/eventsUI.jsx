@@ -3,10 +3,10 @@
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Heart, ShoppingCart } from "lucide-react";
 import Link from 'next/link';
-import { eventsData } from "@/components/data/eventsData"; // Import the events data
+import { upcomingEventsData } from "@/components/data/eventsData"; // Import the events data
 import Image from "next/image";
 
-const carouselAssets = Object.keys(eventsData);
+const carouselAssets = Object.keys( upcomingEventsData);
 
 export default function EventCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -39,7 +39,7 @@ export default function EventCarousel() {
   };
 
   const currentAsset = carouselAssets[currentIndex];
-  const currentEvent = eventsData[currentAsset];
+  const currentEvent = upcomingEventsData[currentAsset];
 
   return (
     <div className={` eventsUI grid grid-cols-1 lg:grid-cols-2 gap-8 p-8 bg-gray-50`}>
@@ -52,7 +52,7 @@ export default function EventCarousel() {
         <div className="relative overflow-hidden rounded-lg shadow-md">
           <div className="relative w-full h-[400px]">
             <Image
-              src={`/uploads/carouselAsset/${currentAsset}`}
+              src={`/uploads/events/${currentAsset}`}
               alt={`${currentEvent.name}`}
               className="object-cover transition-transform duration-300"
               fill
@@ -147,21 +147,33 @@ export default function EventCarousel() {
       <div
         className=' flex items-center justify-center bg-blue-100 rounded-lg shadow-md'
       >
-        <div className="text-center p-8">
-          <h1 className="text-4xl font-bold text-blue-700">
-            Welcome to Bandhit!
-          </h1>
-          <p className="mt-4 text-gray-600">
-            Explore a world of music, events, and unforgettable experiences.
-            Join us in celebrating the artistry of entertainers and the vibrant
-            culture of live performances.
-          </p>
-          <button className="mt-6 px-6 py-3 text-white bg-blue-600 rounded-md shadow-md hover:bg-blue-700 transition-colors">
-          <Link href="/categories">
-            Discover More
-        </Link>
-          </button>
-        </div>
+     <div className="text-center p-8">
+  <h1 className="text-4xl font-bold text-blue-700">
+    Welcome to Bandhit!
+  </h1>
+  <p className="mt-4 text-gray-600">
+    Explore a world of music, events, and unforgettable experiences.
+    Join us in celebrating the artistry of entertainers and the vibrant
+    culture of live performances.
+  </p>
+
+  <div className="mt-6 flex flex-col gap-4 items-center sm:flex-row sm:justify-center">
+    {/* Discover More Button */}
+    <Link href="/categories">
+      <button className="px-6 py-3 text-white bg-blue-600 rounded-md shadow-md hover:bg-blue-700 transition-transform transform hover:scale-105 active:scale-95">
+        Discover More
+      </button>
+    </Link>
+
+    {/* Create Your Event Button */}
+    <Link href="/dashboard">
+      <button className="px-6 py-3 text-white bg-green-600 rounded-md shadow-md hover:bg-green-700 transition-transform transform hover:scale-105 active:scale-95">
+        Create Your Event
+      </button>
+    </Link>
+  </div>
+</div>
+
       </div>
     </div>
   );

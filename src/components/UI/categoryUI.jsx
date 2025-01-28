@@ -6,16 +6,8 @@ import Image from "next/image";
 //eslint-disable-next-line
 import { Heart, ChevronLeft, ChevronRight } from "lucide-react";
 import { Card, CardHeader, CardContent } from "@/components/UI/Card";
+import { carouselImages, calculateDaysUntilEvent } from "@/components/data/eventsData";
 
-const carouselImages = [
-  "/uploads/carouselAsset/2pacalypse.webp",
-  "/uploads/carouselAsset/baloranking.webp",
-  "/uploads/carouselAsset/ghostXtec.webp",
-  "/uploads/carouselAsset/odunsi.webp",
-  "/uploads/carouselAsset/oml.webp",
-  "/uploads/carouselAsset/sdc.webp",
-  "/uploads/carouselAsset/wizkhalifa.webp",
-];
 
 const CategoryUI = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -43,15 +35,18 @@ const CategoryUI = () => {
   }, [mounted, isHovered, nextSlide]);
 
     //eslint-disable-next-line
-  const handleLike = (index) => {
-    setLikes((prev) => ({
-      ...prev,
-      [index]: (prev[index] || 0) + 1,
-    }));
-  };
+    const handleLike = (index) => {
+      setLikes((prev) => ({
+        ...prev,
+        [index]: prev[index] ? null : 1
+      }));
+    };
 
   if (!mounted) return null;
 
+  const currentEvent = carouselImages[currentSlide];
+  const daysUntilEvent = calculateDaysUntilEvent(currentEvent.eventDate);
+  
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     {/* Special Offers Section */}
@@ -84,41 +79,73 @@ const CategoryUI = () => {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
       {/* Carousel Section */}
       <section className="lg:col-span-1">
-        <h2 className="text-3xl font-bold mb-6 text-center lg:text-left">
-          Upcoming Events
-        </h2>
-        <div className="relative h-[400px] overflow-hidden rounded-xl">
-          <Image
-            src={carouselImages[currentSlide]}
-            alt={`Slide ${currentSlide + 1}`}
-            fill
-            className="object-cover transition-opacity duration-500"
+      <h2 className="text-3xl font-bold mb-6 text-center lg:text-left">
+        Upcoming Events
+      </h2>
+      <div 
+        className="relative h-[400px] overflow-hidden rounded-xl group"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <Image
+          src={currentEvent.image}
+          alt={currentEvent.name}
+          fill
+          priority
+          sizes="(max-width: 768px) 100vw, 50vw"
+          className="object-cover transition-opacity duration-500"
+        />
+        
+        {/* Like Button */}
+        <button 
+          onClick={() => handleLike(currentSlide)}
+          className="absolute top-4 right-4 z-10 p-2 bg-white/50 rounded-full"
+        >
+          <Heart 
+            className={`w-6 h-6 transition-colors duration-300 ${
+              likes[currentSlide] 
+                ? 'fill-red-500 text-red-500 animate-pulse' 
+                : 'text-gray-700 hover:text-red-500'
+            }`}
           />
-          <div
-            className={`absolute inset-0 flex items-center justify-between p-4 ${
-              isHovered ? "opacity-100" : "opacity-0"
-            } transition-opacity`}
-          >
-            <button
-              onClick={() =>
-                setCurrentSlide(
-                  (prev) =>
-                    (prev - 1 + carouselImages.length) % carouselImages.length
-                )
-              }
-              className="p-2 rounded-full bg-white/80 hover:bg-white transition-colors"
-            >
-              <ChevronLeft className="w-6 h-6" />
-            </button>
-            <button
-              onClick={nextSlide}
-              className="p-2 rounded-full bg-white/80 hover:bg-white transition-colors"
-            >
-              <ChevronRight className="w-6 h-6" />
-            </button>
+        </button>
+
+        {/* Event Details Overlay */}
+        <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white p-4">
+          <div className="flex justify-between items-center">
+            <div>
+              <h3 className="text-xl font-bold">{currentEvent.name}</h3>
+              <p>{daysUntilEvent} days until event</p>
+            </div>
           </div>
         </div>
-      </section>
+
+        {/* Navigation Buttons */}
+        <div
+          className={`absolute inset-0 flex items-center justify-between p-4 ${
+            isHovered ? "opacity-100" : "opacity-0"
+          } transition-opacity`}
+        >
+          <button
+            onClick={() =>
+              setCurrentSlide(
+                (prev) =>
+                  (prev - 1 + carouselImages.length) % carouselImages.length
+              )
+            }
+            className="p-2 rounded-full bg-white/80 hover:bg-white transition-colors"
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+          <button
+            onClick={nextSlide}
+            className="p-2 rounded-full bg-white/80 hover:bg-white transition-colors"
+          >
+            <ChevronRight className="w-6 h-6" />
+          </button>
+        </div>
+      </div>
+    </section>
   
       {/* Sign-Up Section */}
       <section className="lg:col-span-1">

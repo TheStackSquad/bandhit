@@ -24,4 +24,28 @@ export const calculatePasswordStrength = (password) => {
         return 'bg-gray-200';
     }
   };
+
+
+export const generatePassword = (length = 12) => {
+  const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const lowercase = 'abcdefghijklmnopqrstuvwxyz';
+  const numbers = '0123456789';
+  const symbols = '!@#$%^&*()_+-=[]{}|;:,.<>?';
   
+  const allChars = uppercase + lowercase + numbers + symbols;
+  
+  const generateChar = (charSet) => 
+    charSet[Math.floor(Math.random() * charSet.length)];
+  
+  const password = [
+    generateChar(uppercase),
+    generateChar(lowercase),
+    generateChar(numbers),
+    generateChar(symbols),
+    ...Array.from({ length: length - 4 }, () => 
+      generateChar(allChars))
+  ];
+  
+  // Shuffle the password array
+  return password.sort(() => Math.random() - 0.5).join('');
+};

@@ -19,6 +19,7 @@ import {
   Users,
   Store,
   Mic,
+  UserRoundPen,
 } from "lucide-react";
 
 // React hooks
@@ -51,12 +52,13 @@ const navItems = [
 ];
 
 const nestedNavItems = [
-  { href: "/vendors", icon: Store, label: "Vendors" },
+  { href: "/dashboard", icon: UserRoundPen, label: "Dashboard" },
+  { href: "/hub", icon: Store, label: "Vendors" },
   { href: "/entertainers", icon: Mic, label: "Entertainers" },
 ];
 
 const footerNavItems = [
-  { href: "/about", icon: Info, label: "About Us" },
+  { href: "/about-us", icon: Info, label: "About Us" },
   { href: "/contact", icon: Phone, label: "Contact Us" },
 ];
 
@@ -94,7 +96,7 @@ export default function Dropdown() {
       <Link 
         href={href} 
         className="flex items-center gap-2 w-full"
-        onClick={handleItemClick}
+        onClick={handleItemClick} // Close dropdown on click
       >
         <Icon size={18} /> {label}
       </Link>

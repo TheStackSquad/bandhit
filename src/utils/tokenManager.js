@@ -5,7 +5,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 const REFRESH_SECRET = process.env.REFRESH_SECRET || 'your-refresh-secret';
 
 export const generateTokens = (userId, role) => {
-  console.log('Generating tokens for userId:', userId, 'with role:', role); // Debugging statement
+//  console.log('Generating tokens for userId:', userId, 'with role:', role); // Debugging statement
 
   // Create access token with userId and role in the payload
   const accessToken = jwt.sign(
