@@ -328,21 +328,46 @@ const handleProfileImageChange = async (e) => {
         </Formik>
 
         {/* Sales Tracking Section */}
-        <div className="col-span-full bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Sales Dashboard</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {[
-              { title: "Total Ticket Sales", value: "256" },
-              { title: "Total Revenue", value: "₦256,000" },
-              { title: "App Commission", value: "₦25,600" },
-            ].map(({ title, value }) => (
-              <div key={title} className="bg-gray-100 p-4 rounded-lg">
-                <h3 className="text-sm text-gray-600">{title}</h3>
-                <p className="text-2xl font-bold">{value}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+        <div className="col-span-full bg-white p-8 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.1)] border border-gray-100">
+  <h2 className="text-2xl font-semibold mb-6 text-gray-800">Sales Dashboard</h2>
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    {[
+      { 
+        title: "Total Ticket Sales", 
+        value: "256",
+        bgGradient: "from-blue-50 to-blue-100",
+        textColor: "text-blue-600"
+      },
+      { 
+        title: "Total Revenue", 
+        value: "₦256,000",
+        bgGradient: "from-green-50 to-green-100",
+        textColor: "text-green-600"
+      },
+      { 
+        title: "App Commission", 
+        value: "₦25,600",
+        bgGradient: "from-purple-50 to-purple-100",
+        textColor: "text-purple-600"
+      },
+    ].map(({ title, value, bgGradient, textColor }) => (
+      <div 
+        key={title} 
+        className={`bg-gradient-to-br ${bgGradient} p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-white/50`}
+      >
+        <h3 className="text-sm font-medium text-gray-600 mb-2">{title}</h3>
+        <p className={`text-3xl font-bold ${textColor}`}>
+          {value.includes('₦') ? (
+            <>
+              <span className="text-green-500">₦</span>
+              {value.substring(1)}
+            </>
+          ) : value}
+        </p>
+      </div>
+    ))}
+  </div>
+</div>
       </div>
     </div>
   );
