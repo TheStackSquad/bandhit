@@ -152,7 +152,7 @@ const SignIn = () => {
       text-sm
       text-gray-600"
           >
-            Dont have an account? No worries{" "}
+            Dont have an account? No worries {" "}
             <Link
               href="/signup"
               className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
