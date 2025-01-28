@@ -52,7 +52,7 @@ const SocialSignUp = () => {
   return (
     <div className="flex flex-wrap gap-4 justify-center items-center p-4">
       {socialProviders.map(({ provider, icon: Icon, color, hoverColor }) => (
-        <span
+        <button
           key={provider}
           onClick={() => handleSocialSignup(provider)}
           className={`
@@ -68,7 +68,7 @@ const SocialSignUp = () => {
           aria-label={`Sign up with ${provider}`}
         >
           <Icon className={`text-xl md:text-2xl ${color}`} />
-        </span>
+        </button>
       ))}
     </div>
   );
