@@ -35,22 +35,24 @@ export const uploadToCloudinary = async (file, folder) => {
   }
 };
 
-export const deleteFromCloudinary = async (publicId) => {
-  if (!publicId) {
-  //  console.log('No public ID provided for deletion');
+export const deleteFromCloudinary = async (profileImage) => {
+  if (!profileImage || !profileImage.publicId) {
+    console.error('Invalid profileImage object or missing publicId for deletion');
     return null;
   }
 
   try {
-    return new Promise((resolve, reject) => {
-      cloudinary.uploader.destroy(publicId, (error, result) => {
-        if (error) {
-          console.error('Cloudinary deletion error:', error);
-          reject(new Error('Failed to delete from Cloudinary'));
-        }
-        resolve(result);
-      });
-    });
+    // console.log(`Attempting to delete from Cloudinary: ${profileImage.publicId}`);
+
+    const result = await cloudinary.uploader.destroy(profileImage.publicId);
+
+    if (result.result !== 'ok') {
+      console.error('Cloudinary deletion failed:', result);
+      throw new Error('Failed to delete from Cloudinary');
+    }
+
+    // console.log('Cloudinary deletion successful:', result);
+    return result;
   } catch (error) {
     console.error('Error during deletion:', error);
     throw new Error('Failed to delete from Cloudinary');

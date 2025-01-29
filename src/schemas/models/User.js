@@ -42,11 +42,16 @@ const UserSchema = new mongoose.Schema({
     type: Boolean,
     required: true,
   },
-  profileImage: {
-    url: { type: String, required: true },
-    publicId: { type: String },
-    uploadedAt: { type: Date, default: Date.now },
-  },
+// In User.js schema
+// In User.js schema
+profileImage: {
+  type: Object,
+  default: {
+    url: '/uploads/dashboardDefault/drgnimages.jpeg',
+    publicId: 'default_profile_image',
+    uploadedAt: Date.now()
+  }
+},
   createdAt: {
     type: Date,
     default: Date.now,

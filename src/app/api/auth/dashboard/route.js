@@ -7,63 +7,66 @@ import { verifyToken } from '@/utils/tokenManager';
 
 export async function POST(req) {
   try {
-  //  console.log("Incoming request headers:", req.headers);
-
     const authHeader = req.headers.get("authorization");
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      console.error("Unauthorized access: No token provided or invalid format");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
+    
     const token = authHeader.split(" ")[1];
-
-    // Verifying token using your custom verifyToken function
     const decodedToken = verifyToken(token);
     if (!decodedToken) {
-      console.error("Invalid token");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-  //  console.log("Decoded token:", decodedToken);
-
+    
     await dbConnect();
-
+    // console.log("DB Connected successfully");
+    
     const formData = await req.formData();
-  //  console.log("Received formData entries:");
-  //  for (const pair of formData.entries()) {
-    //  console.log(`${pair[0]}: ${pair[1]}`);
-  //  }
-
+    // console.log("Received FormData:", Object.fromEntries(formData));
+    
     const imageFile = formData.get("coverImage");
+    // console.log("Image file received:", imageFile ? "yes" : "no", imageFile?.size);
+    
     let imageUrl = null;
-
     if (imageFile && imageFile.size > 0) {
-    //  console.log("Uploading event image...");
       const fileBuffer = Buffer.from(await imageFile.arrayBuffer());
-      imageUrl = await uploadToCloudinary(fileBuffer, "events");
-    //  console.log("Image uploaded successfully. URL:", imageUrl);
-    } else {
-    //  console.log("No image provided or image size is zero.");
+      const cloudinaryResponse = await uploadToCloudinary(fileBuffer, "events");
+      // console.log("Cloudinary response:", cloudinaryResponse);
+      
+      imageUrl = {
+        url: cloudinaryResponse.secure_url,
+        publicId: cloudinaryResponse.public_id,
+        uploadedAt: new Date(),
+      };
+      // console.log("Constructed imageUrl object:", imageUrl);
     }
 
     const eventData = {
-      userId: decodedToken.userId, // Extract userId from the token
+      userId: decodedToken.userId,
       eventName: formData.get("eventName"),
       time: formData.get("time"),
       date: formData.get("date"),
       price: formData.get("price"),
       venue: formData.get("venue"),
       capacity: formData.get("capacity"),
-      imageUrl,
+      imageUrl: imageUrl ? {
+        url: imageUrl.url,
+        publicId: imageUrl.publicId,
+        uploadedAt: imageUrl.uploadedAt
+      } : null,
     };
-
-  //  console.log("Constructed eventData:", eventData);
-
+    
+    // console.log("Final eventData being sent to MongoDB:", JSON.stringify(eventData, null, 2));
+    
+    // Let's also check the schema
+    // console.log("Event model schema:", Event.schema.obj);
+    
     const newEvent = await Event.create(eventData);
- //   console.log("New event created:", newEvent);
-
     return NextResponse.json(newEvent, { status: 201 });
   } catch (error) {
     console.error("Event creation error:", error);
+    // Log the full error object
+    console.error("Full error object:", JSON.stringify(error, null, 2));
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

@@ -33,6 +33,7 @@ export async function POST(request) {
       referralSource: data.referralSource,
       isAdult: data.isAdult,
       password: data.password, // Hashing is handled in the schema pre-save
+      // profileImage: data.profileImage || null 
     });
 
     await newUser.save();
