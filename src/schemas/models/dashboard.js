@@ -34,18 +34,14 @@ const EventSchema = new mongoose.Schema({
     maxlength: 200
   },
   imageUrl: {
-    type: String,
-    default: null
+    url: { type: String, required: true },
+    publicId: { type: String },
+    uploadedAt: { type: Date, default: Date.now },
   },
   ticketsSold: {
     type: Number,
     default: 0,
     min: 0
-  },
-  status: {
-    type: String,
-    enum: ['Draft', 'Active', 'Sold Out', 'Cancelled'],
-    default: 'Draft'
   },
   totalRevenue: {
     type: Number,

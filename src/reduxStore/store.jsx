@@ -16,6 +16,7 @@ import {
 import { createLogger } from 'redux-logger';
 import authReducer from '@/reduxStore/reducers/authReducers';
 import cartReducer from '@/reduxStore/reducers/cartReducer';
+import eventReducer from '@/reduxStore/reducers/eventReducer';
 
 // We need to dynamically import storage for Next.js client-side only
 let storage;
@@ -56,6 +57,12 @@ const cartPersistConfig = {
   whitelist: ['items', 'totalAmount']
 };
 
+const eventPersistConfig = {
+  key: 'events',
+  storage, 
+};
+
+
 // Redux logger configuration
 const createReduxLogger = () => {
   return createLogger({ 
@@ -83,7 +90,8 @@ const createStore = () => {
   return configureStore({
     reducer: {
       auth: persistReducer(authPersistConfig, authReducer),
-      cart: persistReducer(cartPersistConfig, cartReducer)
+      cart: persistReducer(cartPersistConfig, cartReducer),
+      event: persistReducer(eventPersistConfig, eventReducer)
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({

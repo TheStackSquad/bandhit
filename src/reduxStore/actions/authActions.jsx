@@ -22,20 +22,22 @@ export const signOut = () => ({
   type: SIGN_OUT
 });
 
-export const createEvent = (eventData, token) => async (dispatch) => {
-//  console.log("EVENTS:", eventData, token);
+export const createEvent = (formData, token) => async (dispatch) => {
+  // console.log("EVENTS before sending:", formData, token);
+
+  
 
   dispatch({ type: CREATE_EVENT_REQUEST });
 
   try {
-    const response = await axios.post("/api/auth/dashboard", eventData, {
+    const response = await axios.post("/api/auth/dashboard", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${token}`,
       },
     });
 
-  //  console.log("API response:", response.data);
+    // console.log("API Response:", response.data); // Log response from the backend
 
     dispatch({
       type: CREATE_EVENT_SUCCESS,
@@ -44,7 +46,7 @@ export const createEvent = (eventData, token) => async (dispatch) => {
 
     return response.data;
   } catch (error) {
-    console.error("API Error:", error.response || error.message);
+    console.error("API Error:", error.response?.data || error.message);
     dispatch({
       type: CREATE_EVENT_FAILURE,
       payload: error.response?.data || "Event creation failed",
@@ -93,12 +95,6 @@ export const updateProfileImage = (formData, token) => async (dispatch) => {
     throw new Error("User not authenticated.");
   }
 
-//  console.log("Using token for authentication:", token);
-
-  // Log formData keys for debugging
-//  for (const pair of formData.entries()) {
-  //  console.log(pair[0], pair[1]);
- // }
 
   try {
     const response = await axios.post(
@@ -111,6 +107,7 @@ export const updateProfileImage = (formData, token) => async (dispatch) => {
         },
       }
     );
+    // console.log("API response for profile image update:", response.data);
 
   //  console.log("API response for profile image update:", response.data);
 

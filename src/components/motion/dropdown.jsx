@@ -146,7 +146,7 @@ export default function Dropdown() {
             >
               <div className="flex items-center gap-2 w-full text-gray-700 hover:text-blue-600 cursor-pointer">
                 <Users size={18} /> 
-                <span>For Vendors/Entertainers</span>
+                <span>Vendors/Entertainers</span>
                 <ChevronDown
                   className={`ml-auto transition-transform duration-200 ${nestedOpen ? "rotate-180" : ""}`}
                   size={18}

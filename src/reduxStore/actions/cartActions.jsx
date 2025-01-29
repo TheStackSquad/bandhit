@@ -13,6 +13,7 @@ import {
 
 // Add to Cart
 export const addToCart = (item, token) => async (dispatch) => {
+  // console.log('token in cart action:', token);
   try {
     dispatch({ type: ADD_TO_CART_REQUEST });
     const config = { headers: { Authorization: `Bearer ${token}` } };

@@ -3,7 +3,8 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '@/utils/dbConnect';
 import User from '@/schemas/models/User';
-import {generateTokens } from '@/utils/tokenManager';
+import Event from '@/schemas/models/dashboard';
+import { generateTokens } from '@/utils/tokenManager';
 import bcrypt from 'bcryptjs';
 
 export async function POST(request) {
@@ -13,7 +14,6 @@ export async function POST(request) {
     const { email, password } = await request.json();
 
     const user = await User.findOne({ email }).select('+password');
-    const role = user?.role || 'user'; 
     if (!user) {
       return NextResponse.json(
         { message: 'Invalid credentials' },
@@ -22,7 +22,6 @@ export async function POST(request) {
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    
     if (!isPasswordValid) {
       return NextResponse.json(
         { message: 'Invalid credentials' },
@@ -30,29 +29,32 @@ export async function POST(request) {
       );
     }
 
-    const { accessToken, refreshToken } = generateTokens(user._id, role);
+    const { accessToken, refreshToken } = generateTokens(user._id, user.role);
+
+    // ✅ Fetch all events in the database
+    const allEvents = await Event.find({}).lean(); 
 
     // Create a user object without the password
     const userWithoutPassword = {
       _id: user._id,
-      role: role,
+      role: user.role,
       email: user.email,
       name: user.name,
       phone: user.phoneNumber,
       city: user.city,
-      accessToken, // Include the token values directly
-      refreshToken, // Include the refresh token directly
-      // Add other user fields as needed
+      accessToken,
+      refreshToken,
+      events: allEvents, // ✅ Now includes all events
     };
-    
+
     return NextResponse.json(userWithoutPassword, { status: 200 });
-    
 
   } catch (error) {
-    console.error('Error in signup route:', error);
+    console.error('Error in sign-in route:', error);
     return NextResponse.json(
       { message: 'Internal server error' },
       { status: 500 }
     );
   }
 }
+
