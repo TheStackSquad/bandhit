@@ -35,16 +35,16 @@ export const uploadToCloudinary = async (file, folder) => {
   }
 };
 
-export const deleteFromCloudinary = async (profileImage) => {
-  if (!profileImage || !profileImage.publicId) {
-    console.error('Invalid profileImage object or missing publicId for deletion');
+export const deleteFromCloudinary = async (imageData) => {
+  if (!imageData || !imageData.publicId) {
+    console.error('Invalid image object or missing publicId for deletion');
     return null;
   }
 
   try {
-    // console.log(`Attempting to delete from Cloudinary: ${profileImage.publicId}`);
+    // console.log(`Attempting to delete from Cloudinary: ${imageData.publicId}`);
 
-    const result = await cloudinary.uploader.destroy(profileImage.publicId);
+    const result = await cloudinary.uploader.destroy(imageData.publicId);
 
     if (result.result !== 'ok') {
       console.error('Cloudinary deletion failed:', result);
@@ -58,3 +58,27 @@ export const deleteFromCloudinary = async (profileImage) => {
     throw new Error('Failed to delete from Cloudinary');
   }
 };
+
+// export const deleteEventImageFromCloudinary = async (imageUrl) => {
+//   if (!imageUrl || !imageUrl.publicId) {
+//     console.error('Invalid imageUrl object or missing publicId for deletion');
+//     return null;
+//   }
+
+//   try {
+//     console.log(`Attempting to delete event image from Cloudinary: ${imageUrl.publicId}`);
+
+//     const result = await cloudinary.uploader.destroy(imageUrl.publicId);
+
+//     if (result.result !== 'ok') {
+//       console.error('Cloudinary event image deletion failed:', result);
+//       throw new Error('Failed to delete event image from Cloudinary');
+//     }
+
+//     console.log('Cloudinary event image deletion successful:', result);
+//     return result;
+//   } catch (error) {
+//     console.error('Error during event image deletion:', error);
+//     throw new Error('Failed to delete event image from Cloudinary');
+//   }
+// };

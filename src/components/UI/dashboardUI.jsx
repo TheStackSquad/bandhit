@@ -1,7 +1,7 @@
 //src/components/UI/dashboard.jsx
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Formik, Form, Field } from "formik";
 import { useSelector } from "react-redux";
 import { Camera } from "lucide-react";
@@ -21,24 +21,23 @@ const DashboardUI = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [profileUploadStatus, setProfileUploadStatus] = useState("idle");
   const [coverUploadStatus, setCoverUploadStatus] = useState("idle");
-  
+
   const [imageError, setImageError] = useState(false);
 
-    // Function to handle image load errors
-    const handleImageError = () => {
-      setImageError(true);
-    };
+  const [token, setToken] = useState(null);
+  // Function to handle image load errors
+  const handleImageError = () => {
+    setImageError(true);
+  };
 
-    const handleImageLoad = () => {
-      setImageError(false);
-    };
-  
-    // default image path
-    const defaultImagePath = '/uploads/dashboardDefault/drgnimages.jpeg';
+  const handleImageLoad = () => {
+    setImageError(false);
+  };
 
-  const authData = localStorage.getItem("auth");
-  const auth = authData ? JSON.parse(authData) : null;
-  const token = auth?.accessToken; // Directly access the token
+  // default image path
+  const defaultImagePath = "/uploads/dashboardDefault/drgnimages.jpeg";
+
+
 
   // Custom hooks with proper dependencies
   //eslint-disable-next-line
@@ -78,22 +77,32 @@ const DashboardUI = () => {
     }
   };
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const authData = localStorage.getItem("auth");
+      const auth = authData ? JSON.parse(authData) : null;
+      setToken(auth?.accessToken);
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       {/* User Profile Section */}
-   
+
       <div className="relative container mx-auto mb-8 flex items-center gap-4">
-    
-    
-      <div className={getProfileImageContainerClass(profileUploadStatus)}>
+        <div className={getProfileImageContainerClass(profileUploadStatus)}>
           <Image
-            src={!imageError && user?.profileImage?.url ? user.profileImage.url : defaultImagePath}
-            alt={`Profile picture of ${user?.name || 'User'}`}
+            src={
+              !imageError && user?.profileImage?.url
+                ? user.profileImage.url
+                : defaultImagePath
+            }
+            alt={`Profile picture of ${user?.name || "User"}`}
             width={64}
             height={64}
             style={{
               maxWidth: "100%",
-              height: "auto",
+              height: "100%",
             }}
             className="object-cover w-16 h-16 rounded-full"
             onError={handleImageError}
@@ -101,7 +110,6 @@ const DashboardUI = () => {
             priority // Prioritize loading for above-the-fold image
           />
         </div>
-
 
         <label
           htmlFor="profileImageUpload"
@@ -125,34 +133,33 @@ const DashboardUI = () => {
       <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Image Upload Section */}
         <div className="bg-white p-6 rounded-lg shadow-md relative">
-          <input
-            type="file"
-            accept="image/*"
-            className="hidden"
-            id="imageUpload"
-            onChange={handleImageChange}
-          />
-          <label
-            htmlFor="imageUpload"
-            className="absolute top-4 right-4 cursor-pointer text-blue-500 hover:text-blue-700"
-          >
-            <Camera />
-          </label>
-          {selectedImage ? (
-            <Image
-              src={URL.createObjectURL(selectedImage)}
-              alt="Selected Event"
-              width={400}
-              height={256}
-              className="object-cover rounded-lg w-full h-64"
-              unoptimized
-            />
-          ) : (
-            <div className={getCoverImageContainerClass(coverUploadStatus)}>
-              No Image Selected
-            </div>
-          )}
-        </div>
+  <input
+    type="file"
+    accept="image/*"
+    className="hidden"
+    id="imageUpload"
+    onChange={handleImageChange}
+  />
+  <label
+    htmlFor="imageUpload"
+    className="absolute top-4 right-4 cursor-pointer text-blue-500 hover:text-blue-700"
+  >
+    <Camera />
+  </label>
+  {selectedImage ? (
+    <Image
+      src={URL.createObjectURL(selectedImage)}
+      alt="Selected Event"
+      fill
+      className="object-cover rounded-lg w-full h-64"
+      unoptimized
+    />
+  ) : (
+    <div className={getCoverImageContainerClass(coverUploadStatus)}>
+      No Image Selected
+    </div>
+  )}
+</div>
 
         {/* Event Creation Form */}
         <Formik
@@ -220,22 +227,27 @@ const DashboardUI = () => {
                   </div>
 
                   <div>
-                    <label
-                      htmlFor="price"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Price
-                    </label>
-                    <Field
-                      name="price"
-                      placeholder="₦0.00"
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-0"
-                    />
-                    {errors.price && touched.price && (
-                      <div className="text-red-500 text-sm">{errors.price}</div>
-                    )}
-                  </div>
+  <label
+    htmlFor="price"
+    className="block text-sm font-medium text-gray-700"
+  >
+    Price
+  </label>
+  <div className="relative mt-1">
+    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">₦</span>
+    <Field
+      name="price"
+      placeholder="0.00"
+      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-0 pl-7"
+    />
+  </div>
+  {errors.price && touched.price && (
+    <div className="text-red-500 text-sm">{errors.price}</div>
+  )}
+</div>
+                 
                 </div>
+
                 <div>
                   <label
                     htmlFor="venue"
