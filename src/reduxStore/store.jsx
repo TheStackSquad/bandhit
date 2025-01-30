@@ -3,20 +3,22 @@
 'use client';
 
 import { configureStore } from '@reduxjs/toolkit';
-import { 
-  persistStore, 
-  persistReducer, 
-  FLUSH, 
-  REHYDRATE, 
-  PAUSE, 
-  PERSIST, 
-  PURGE, 
-  REGISTER 
+import {
+  persistStore,
+  persistReducer,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER
 } from 'redux-persist';
 import { createLogger } from 'redux-logger';
 import authReducer from '@/reduxStore/reducers/authReducers';
 import cartReducer from '@/reduxStore/reducers/cartReducer';
 import eventReducer from '@/reduxStore/reducers/eventReducer';
+import { eventApi } from '@/reduxStore/api/eventsApi';
+
 
 // We need to dynamically import storage for Next.js client-side only
 let storage;
@@ -91,14 +93,16 @@ const createStore = () => {
     reducer: {
       auth: persistReducer(authPersistConfig, authReducer),
       cart: persistReducer(cartPersistConfig, cartReducer),
-      event: persistReducer(eventPersistConfig, eventReducer)
+      event: persistReducer(eventPersistConfig, eventReducer),
+      [eventApi.reducerPath]: eventApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
         serializableCheck: {
           ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER]
         },
-      }).concat(getMiddleware()),
+      }).concat(getMiddleware())
+      .concat(eventApi.middleware),
     devTools: process.env.NODE_ENV !== 'production'
   });
 };

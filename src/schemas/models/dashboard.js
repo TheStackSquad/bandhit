@@ -25,8 +25,11 @@ const EventSchema = new mongoose.Schema({
   price: {
     type: Number,
     required: true,
-    min: [0, 'Price cannot be negative']
+    min: [0, 'Price cannot be negative'],
+    get: (value) => `₦${value.toLocaleString()}`, // Converts 1000 to ₦1,000
+    set: (value) => parseFloat(value.toString().replace(/[₦,]/g, "")), // Ensures only numbers are stored
   },
+  
   venue: {
     type: String,
     required: true,

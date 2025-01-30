@@ -61,11 +61,11 @@ export const CarouselImage = React.memo(({ currentEvent, isHovered }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   const imageUrl = useMemo(() => {
-    if (!currentEvent?.imageUrl) return null;
-    return currentEvent.imageUrl.startsWith('http') 
-      ? currentEvent.imageUrl 
-      : `/uploads/events/${currentEvent.imageUrl}`;
-  }, [currentEvent?.imageUrl]);
+    if (!currentEvent?.imageUrl?.url) return null;  // Check for imageUrl.url
+    return currentEvent.imageUrl.url.startsWith('http')  // Use imageUrl.url
+      ? currentEvent.imageUrl.url 
+      : `/uploads/events/${currentEvent.imageUrl.url}`;
+  }, [currentEvent?.imageUrl?.url]);  // Depend on imageUrl.url
 
   const altText = useMemo(() => {
     if (!currentEvent) return 'Event image';
@@ -94,7 +94,7 @@ export const CarouselImage = React.memo(({ currentEvent, isHovered }) => {
         fill
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         priority
-        onLoadingComplete={() => setIsLoading(false)}
+        onLoad={() => setIsLoading(false)}
         onError={(e) => {
           setIsLoading(false);
           console.error('Error loading image:', e);
@@ -247,17 +247,18 @@ export const HeroBanner = () => (
         culture of live performances.
       </p>
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <Link href="/categories">
-          <button className="w-full sm:w-auto px-6 py-3 text-white bg-blue-600 rounded-md shadow-md hover:bg-blue-700 transition-transform transform hover:scale-105 active:scale-95">
-            Discover More
-          </button>
-        </Link>
-        <Link href="/dashboard">
-          <button className="w-full sm:w-auto px-6 py-3 text-white bg-green-600 rounded-md shadow-md hover:bg-green-700 transition-transform transform hover:scale-105 active:scale-95">
-            Create Your Event
-          </button>
-        </Link>
-      </div>
+  <Link href="/categories">
+    <button className="w-full sm:w-auto px-6 py-3 text-white bg-indigo-500 rounded-lg shadow-lg hover:bg-indigo-600 transition-transform transform hover:scale-105 active:scale-95">
+      Discover More
+    </button>
+  </Link>
+  <Link href="/dashboard">
+    <button className="w-full sm:w-auto px-6 py-3 text-white bg-rose-500 rounded-lg shadow-lg hover:bg-rose-600 transition-transform transform hover:scale-105 active:scale-95">
+      Create Your Event
+    </button>
+  </Link>
+</div>
+
     </div>
   </div>
 );
