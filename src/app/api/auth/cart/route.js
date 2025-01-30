@@ -5,9 +5,6 @@ import dbConnect from '@/utils/dbConnect';
 import CartItems from '@/schemas/models/Cart';
 import { verifyToken } from '@/utils/tokenManager';
 
-// Connect to the database
-await dbConnect();
-
 // POST: Add item to the cart
 export async function POST(req) {
   try {
@@ -23,6 +20,8 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Invalid or expired token' }, { status: 403 });
     }
     // console.log('user cart token in route:', user);
+
+    await dbConnect();
 
     const data = await req.json();
    // console.log('user cart data in route:', data);
@@ -93,6 +92,8 @@ export async function GET(req) {
       return NextResponse.json({ error: 'Invalid or expired token' }, { status: 403 });
     }
 
+    await dbConnect();
+    
     const cartItems = await CartItems.find({ userId: user.id }).populate('eventId'); // Populate event details
     return NextResponse.json({ cartItems }, { status: 200 });
   } catch (error) {
