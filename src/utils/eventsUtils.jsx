@@ -4,41 +4,76 @@ import React, { useState, useMemo, useEffect } from 'react';
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, Heart, ShoppingCart } from "lucide-react";
-import { addToCart } from "@/reduxStore/actions/cartActions";
 
 // ✅ Utility function to safely parse events data from localStorage
 export const parseEventsData = (storageData) => {
   try {
     const parsedOuter = JSON.parse(storageData);
+    // console.log('parsed outer:', parsedOuter);
     return JSON.parse(parsedOuter.events);
+   
   } catch (error) {
     console.error('Error parsing events data:', error);
     return [];
   }
 };
 
-// ✅ Memoized function for handling cart submission
-export const handleCartSubmit = (eventDetails, token, dispatch) => {
-  const getToken = () => {
-    if (token) return token;
+// ✅ Refactored function for handling cart submission
+// Generate a unique ID for the event
+const generateId = () => `event_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+
+export const handleCartSubmit = (eventDetails) => {
+  // Retrieve existing events from localStorage
+  const getEventsFromLocalStorage = () => {
     try {
-      const authData = localStorage.getItem("auth");
-      const auth = authData ? JSON.parse(authData) : null;
-      return auth?.accessToken;
+      const eventsData = localStorage.getItem("events");
+      return eventsData ? JSON.parse(eventsData) : [];
     } catch (error) {
-      console.error("Error accessing auth token:", error);
-      return null;
+      console.error("Error retrieving events from localStorage:", error);
+      return [];
     }
   };
 
-  const validToken = getToken();
-  if (!validToken) {
-    console.error("No authentication token found.");
-    return;
-  }
-  
-  dispatch(addToCart(eventDetails, validToken));
+  // Check if the event already exists in localStorage
+  const findEventIndex = (events, eventDetails) => {
+    return events.findIndex((event) => event.id === eventDetails.id);
+  };
+
+  // Add or update event in localStorage
+  const addOrUpdateEventInLocalStorage = (eventDetails) => {
+    const events = getEventsFromLocalStorage();
+
+    // Ensure event has a unique ID
+    if (!eventDetails.id) {
+      eventDetails.id = generateId();
+    }
+
+    const eventIndex = findEventIndex(events, eventDetails);
+
+    if (eventIndex !== -1) {
+      // If event exists, increase quantity
+      events[eventIndex].quantity = (events[eventIndex].quantity || 1) + 1;
+    } else {
+      // Add new event with quantity and price
+      events.push({
+        ...eventDetails,
+        quantity: 1, // Default quantity
+        price: eventDetails.price || 0, // Ensure price exists
+      });
+    }
+
+    // Save updated events list
+    try {
+      localStorage.setItem("events", JSON.stringify(events));
+    } catch (error) {
+      console.error("Error saving event to localStorage:", error);
+    }
+  };
+
+  // Call function to add/update the event
+  addOrUpdateEventInLocalStorage(eventDetails);
 };
+
 
 // ✅ Carousel navigation handlers
 export const handleCarouselNavigation = {
@@ -174,41 +209,34 @@ export const CarouselOverlay = ({ currentEvent, isHovered }) => (
           <span>Price:</span>
           <span>{currentEvent.price}</span>
         </p>
-        <p
-          className={`flex justify-between text-sm md:text-base ${
-            currentEvent.status === "Sold Out"
-              ? "text-red-400"
-              : currentEvent.status === "Postponed"
-              ? "text-yellow-400"
-              : "text-green-400"
-          }`}
-        >
-          <span>Status:</span>
-          <span>{currentEvent.status}</span>
-        </p>
       </div>
     </div>
   </div>
 );
 
-export const ActionButtons = ({ likes, handleLike, handleAddToCart, isItemInCart, cartItemsCount }) => (
+export const ActionButtons = ({ likes, handleLike, handleAddToCart, isItemInCart }) => (
   <div className="absolute top-4 right-4 flex gap-2 z-10">
+    {/* Like Button */}
     <button
       className="flex items-center gap-1 px-3 py-2 text-white bg-red-600/80 rounded-md shadow-md hover:bg-red-700 transition-colors"
       onClick={handleLike}
+      disabled={likes > 0} // Disable button if already liked
     >
       <Heart className="w-4 h-4 md:w-5 md:h-5" />
       <span className="text-sm md:text-base">{likes}</span>
     </button>
+
+    {/* Add to Cart Button */}
     <button
       className={`flex items-center px-3 py-2 rounded-md shadow-md transition-colors ${
-        isItemInCart ? "bg-green-600 hover:bg-green-700" : "bg-blue-600 hover:bg-blue-700"
+        isItemInCart ? "bg-green-600 hover:bg-green-700 glow" : "bg-blue-600 hover:bg-blue-700"
       }`}
       onClick={handleAddToCart}
+      disabled={isItemInCart} // Disable button if already in cart
     >
       <ShoppingCart className="w-4 h-4 md:w-5 md:h-5 text-white" />
-      {cartItemsCount > 0 && (
-        <span className="ml-1 text-white text-sm md:text-base">{cartItemsCount}</span>
+      {isItemInCart && (
+        <span className="ml-1 text-white text-sm md:text-base">Added</span>
       )}
     </button>
   </div>
@@ -235,8 +263,9 @@ export const NavigationButtons = ({ isHovered, prevSlide, nextSlide }) => (
   </div>
 );
 
+
 export const HeroBanner = () => (
-  <div className="flex items-center justify-center bg-blue-100 rounded-lg shadow-md p-6 md:p-8">
+  <div className="flex items-center justify-center bg-blue-200 rounded-lg shadow-lg p-6 md:p-8">
     <div className="text-center max-w-lg">
       <h1 className="text-3xl md:text-4xl font-bold text-blue-700 mb-4">
         Welcome to Bandhit!
@@ -246,19 +275,20 @@ export const HeroBanner = () => (
         Join us in celebrating the artistry of entertainers and the vibrant
         culture of live performances.
       </p>
-      <div className="flex flex-col sm:flex-row gap-4 justify-center">
-  <Link href="/categories">
-    <button className="w-full sm:w-auto px-6 py-3 text-white bg-indigo-500 rounded-lg shadow-lg hover:bg-indigo-600 transition-transform transform hover:scale-105 active:scale-95">
-      Discover More
-    </button>
-  </Link>
-  <Link href="/dashboard">
-    <button className="w-full sm:w-auto px-6 py-3 text-white bg-rose-500 rounded-lg shadow-lg hover:bg-rose-600 transition-transform transform hover:scale-105 active:scale-95">
-      Create Your Event
-    </button>
-  </Link>
-</div>
 
+      <div className="flex flex-col sm:flex-row gap-4 justify-center">
+       
+<button className="mt-6 px-6 py-3 text-white bg-blue-600 rounded-md shadow-md hover:bg-blue-700 transition-colors">
+<Link href="/categories">Discover More</Link>
+</button>
+
+     
+<button className="mt-6 px-6 py-3 text-blue-400 bg-orangered rounded-md shadow-md hover:bg-orange transition-colors font-600">
+  <Link href="/dashboard">Create Your Event</Link>
+</button>
+
+     
+      </div>
     </div>
   </div>
 );

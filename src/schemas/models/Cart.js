@@ -1,4 +1,4 @@
-//src/schemas/models/Cart.js
+//src/schemas/models/Cart
 import mongoose from 'mongoose';
 
 const CartSchema = new mongoose.Schema(
@@ -8,11 +8,11 @@ const CartSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
-    id: {
+    eventId: {  // Changed from _id to eventId to avoid conflicts with MongoDB's _id
       type: String,
       required: true,
     },
-    name: {
+    eventName: {  // Changed from name to eventName
       type: String,
       required: true,
     },
@@ -25,11 +25,7 @@ const CartSchema = new mongoose.Schema(
       required: true,
     },
     price: {
-      type: String,
-      required: true,
-    },
-    status: {
-      type: String,
+      type: Number,  // Changed from String to Number since your incoming price is numeric
       required: true,
     },
     venue: {
@@ -46,5 +42,7 @@ const CartSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+CartSchema.index({ eventId: 1, userId: 1 }, { unique: true });
 
 export default mongoose.models.CartItems || mongoose.model('CartItems', CartSchema);
