@@ -1,3 +1,4 @@
+//src/schemas/validationSchema/paymentSchema.jsx
 import * as yup from 'yup';
 
 const paymentSchema = yup.object({

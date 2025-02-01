@@ -12,12 +12,13 @@ import {
 } from "@/reduxStore/constants/actionTypes";
 
 // Add to Cart
-export const addToCart = (item, token) => async (dispatch) => {
-  // console.log('token in cart action:', token);
+export const addToCart = (eventCart, token) => async (dispatch) => {
+  //  console.log('token in cart action:', token);
+    //  console.log('items in cart action:', eventCart);
   try {
     dispatch({ type: ADD_TO_CART_REQUEST });
     const config = { headers: { Authorization: `Bearer ${token}` } };
-    const response = await axios.post("/api/auth/cart", item, config);
+    const response = await axios.post("/api/auth/cart", eventCart, config);
     dispatch({ type: ADD_TO_CART, payload: response.data });
   } catch (error) {
     console.error("Error adding item to cart:", error);
@@ -38,14 +39,54 @@ export const fetchCart = (token) => async (dispatch) => {
   }
 };
 
-// Remove from Cart
-export const removeFromCart = (id, token) => async (dispatch) => {
+//src/reduxStore/actions/cartActions.jsx
+export const removeFromCart = (itemId, token) => async (dispatch) => {
+  //  console.log('removeFromCart action creator called:', {
+  //   itemId,
+  //   tokenExists: !!token,
+  //   timestamp: new Date().toISOString()
+  // });
+
   try {
-    const config = { headers: { Authorization: `Bearer ${token}` } };
-    await axios.delete(`/api/auth/cart/${id}`, config);
-    dispatch({ type: REMOVE_FROM_CART, payload: id });
+    const config = { 
+      headers: { 
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    };
+    
+    // console.log('Making DELETE request to:', `/api/auth/cart/${itemId}`, {
+      // headers: {
+        // ...config.headers,
+        // Authorization: 'Bearer [REDACTED]' // Don't log actual token
+      // }
+    // });
+    
+    const response = await axios.delete(`/api/auth/cart/${itemId}`, config);
+    
+    // console.log('Delete API Response:', {
+    //   status: response.status,
+    //   statusText: response.statusText,
+    //   data: response.data
+    // });
+
+    if (response.status === 200) {
+      dispatch({ type: REMOVE_FROM_CART, payload: itemId });
+      // console.log('Successfully dispatched REMOVE_FROM_CART action:', {
+        // itemId,
+        // timestamp: new Date().toISOString()
+      // });
+      return true;
+    }
   } catch (error) {
-    console.error("Error removing item from cart:", error);
+    console.error('Error in removeFromCart:', {
+      itemId,
+      errorMessage: error.message,
+      errorResponse: error.response?.data,
+      errorStatus: error.response?.status,
+      timestamp: new Date().toISOString()
+    });
+    throw error;
   }
 };
 

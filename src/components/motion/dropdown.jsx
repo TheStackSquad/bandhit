@@ -2,7 +2,6 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useSelector } from "react-redux";
 import Link from "next/link";
 import {
   Bookmark,
@@ -13,6 +12,7 @@ import {
   Layers,
   Phone,
   Book,
+  //eslint-disable-next-line
   ShoppingCart,
   Users,
   Store,
@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
+import AnimatedCartIcon from '@/components/motion/animatedIcon';
 // Modified animation variants for vertical staggering
 const dropdownVariants = {
   hidden: { opacity: 0, y: -10 },
@@ -58,13 +59,12 @@ const footerNavItems = [
   { href: "/contact", icon: Phone, label: "Contact Us" },
 ];
 
+
+
 export default function Dropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const [nestedOpen, setNestedOpen] = useState(false);
   const dropdownRef = useRef(null);
-  
-  const cartItems = useSelector((state) => state.cart.items);
-  const cartCount = cartItems.length;
 
   const handleClickOutside = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -102,19 +102,9 @@ export default function Dropdown() {
   return (
     <div className="relative" ref={dropdownRef}>
       <div className="flex items-center gap-4">
-        <Link href="/checkout">
-          <button
-            className="relative flex items-center justify-center w-12 h-12 text-white bg-blue-600 rounded-full shadow-md focus:outline-none hover:bg-blue-700 hover:shadow-lg transition-all duration-200 focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
-            aria-label="Cart"
-          >
-            <ShoppingCart size={20} className="w-6 h-6" />
-            {cartCount > 0 && (
-              <span className="absolute top-0 right-0 flex items-center justify-center w-5 h-5 text-sm font-bold text-white bg-red-600 rounded-full">
-                {cartCount}
-              </span>
-            )}
-          </button>
-        </Link>
+      <Link href="/checkout">
+        <AnimatedCartIcon />
+      </Link>
 
         <button
           className="flex items-center gap-2 px-4 py-2 text-white bg-blue-600 rounded-md shadow-md focus:outline-none hover:bg-blue-700 hover:shadow-lg transform hover:translate-y-[-2px] transition-all duration-200 focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"

@@ -19,30 +19,19 @@ export async function POST(req) {
     if (!user) {
       return NextResponse.json({ error: 'Invalid or expired token' }, { status: 403 });
     }
-    // console.log('user cart token in route:', user);
 
     await dbConnect();
 
     const data = await req.json();
-   // console.log('user cart data in route:', data);
+    // console.log('user cart data in route:', data);
 
     // Convert the string ID to ObjectId for userId
     const userId = new mongoose.Types.ObjectId(user.userId);
 
-    // Validate required fields
-    const requiredFields = ['id', 'name', 'time', 'date', 'price', 'status', 'venue'];
-    const missingFields = requiredFields.filter(field => !data[field]);
-    
-    if (missingFields.length > 0) {
-      return NextResponse.json({ 
-        error: `Missing required fields: ${missingFields.join(', ')}` 
-      }, { status: 400 });
-    }
-
     // Check if the item already exists in the user's cart
     let cartItem = await CartItems.findOne({ 
       userId: userId,
-      id: data.id 
+      eventId: data._id  // Changed from id to _id to match incoming data
     });
 
     if (cartItem) {
@@ -53,12 +42,11 @@ export async function POST(req) {
       // Create new cart item with the correct structure
       cartItem = new CartItems({
         userId: userId,
-        id: data.id,
-        name: data.name,
+        eventId: data._id,
+        eventName: data.eventName,  // Changed from name to eventName
         time: data.time,
         date: data.date,
         price: data.price,
-        status: data.status,
         venue: data.venue,
         quantity: 1
       });
@@ -72,12 +60,63 @@ export async function POST(req) {
     
   } catch (error) {
     console.error('Error adding to cart:', error);
-    // Send back the actual error message for debugging
     return NextResponse.json({ 
       error: error.message || 'Internal server error'
     }, { status: 500 });
   }
 }
+
+// DELETE: Remove item from the cart
+export async function DELETE(req, { params }) {
+  // console.log('=== DELETE Route Handler Started ===');
+  
+  try {
+    // Authenticate the user
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    const token = authHeader.split(' ')[1];
+    const user = await verifyToken(token);
+    if (!user) return NextResponse.json({ error: 'Invalid token' }, { status: 403 });
+
+    // Connect to DB
+    await dbConnect();
+    
+    // Extract `eventId` or `_id` from params
+    let { eventId } = params;
+    const userId = new mongoose.Types.ObjectId(user.userId);
+
+    // console.log('Delete Query Params:', { eventId, userId });
+
+    let query = { userId }; // Base query
+    if (mongoose.Types.ObjectId.isValid(eventId)) {
+      // If it's a valid ObjectId, use _id
+      query._id = new mongoose.Types.ObjectId(eventId);
+    } else {
+      // Otherwise, use eventId field
+      query.eventId = eventId;
+    }
+
+    // Attempt to delete item
+    const deletedItem = await CartItems.findOneAndDelete(query);
+
+    if (!deletedItem) {
+      return NextResponse.json({ error: 'Item not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({
+      message: 'Event removed successfully',
+      deletedItem
+    }, { status: 200 });
+
+  } catch (error) {
+    console.error('Delete error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  } finally {
+    // console.log('=== DELETE Route Handler Completed ===');
+  }
+}
+
 
 // GET: Fetch all cart items for the authenticated user
 export async function GET(req) {

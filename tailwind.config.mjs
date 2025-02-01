@@ -10,10 +10,19 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        orange: "#FFA500", // Custom Orange
+        orangered: "#FF4500", // Custom Orangered
+        orchid: "#DA70D6", // Custom Orchid
+        teal: "#008080", // Custom Teal
       },
       fontFamily: {
         'nova-flat': ['var(--font-nova-flat)'],
         'josefin': ['var(--font-josefin)'],
+      },
+      fontWeight: {
+        400: "400",
+        600: "600",
+        800: "800",
       },
     },
   },
