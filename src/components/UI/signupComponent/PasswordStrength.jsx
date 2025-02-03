@@ -22,20 +22,22 @@ const PasswordStrength = ({ password }) => {
 
   return (
     <div className="mt-2">
-      <p className="text-sm text-gray-700">Password Strength: 
-        <span
-          className={`font-semibold ${
-            strength === 'Strong'
-              ? 'text-green-500'
-              : strength === 'Medium'
-              ? 'text-yellow-500'
-              : 'text-red-500'
-          }`}
-        >
-          {strength}
-        </span>
-      </p>
-    </div>
+  <p className="text-sm text-gray-700">
+    Password Strength: {" "}
+    <span
+      className={`font-semibold ${
+        strength === 'Strong'
+          ? 'text-green-500'
+          : strength === 'Medium'
+          ? 'text-yellow-500'
+          : 'text-red-500'
+      }`}
+    >
+      {strength}
+    </span>
+  </p>
+</div>
+
   );
 };
 

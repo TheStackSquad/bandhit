@@ -1,9 +1,16 @@
-//src/utils/cartUtils.jsx
-//src/utils/cartUtils.jsx
+// src/utils/cartUtils.jsx
 import { useState, useEffect } from 'react';
 
 export const useCart = () => {
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState(() => {
+    // Initialize with current cart items from localStorage
+    try {
+      return JSON.parse(localStorage.getItem("events")) || [];
+    } catch (error) {
+      console.error("Error parsing cart items:", error);
+      return [];
+    }
+  });
 
   // Function to get current cart items from localStorage
   const getCurrentCart = () => {
@@ -20,7 +27,7 @@ export const useCart = () => {
     try {
       // Update localStorage
       localStorage.setItem("events", JSON.stringify(newItems));
-      // Update state
+      // Update state immediately
       setCartItems(newItems);
       // Dispatch custom event for cross-component communication
       window.dispatchEvent(new CustomEvent('cartUpdated', { 
@@ -31,28 +38,18 @@ export const useCart = () => {
     }
   };
 
-  // Listen for both storage events and custom events
+  // Listen for storage events from other tabs/windows
   useEffect(() => {
-    const handleCartUpdate = (event) => {
-      if (event.type === 'cartUpdated') {
-        setCartItems(event.detail.cartItems);
-      } else {
-        // Storage event from other tabs
+    const handleStorageChange = (event) => {
+      if (event.key === "events") {
         const newCart = getCurrentCart();
         setCartItems(newCart);
       }
     };
 
-    // Initial cart load
-    setCartItems(getCurrentCart());
-
-    // Add event listeners
-    window.addEventListener('storage', handleCartUpdate);
-    window.addEventListener('cartUpdated', handleCartUpdate);
-
+    window.addEventListener('storage', handleStorageChange);
     return () => {
-      window.removeEventListener('storage', handleCartUpdate);
-      window.removeEventListener('cartUpdated', handleCartUpdate);
+      window.removeEventListener('storage', handleStorageChange);
     };
   }, []);
 
@@ -62,3 +59,4 @@ export const useCart = () => {
     updateCartItems,
   };
 };
+
