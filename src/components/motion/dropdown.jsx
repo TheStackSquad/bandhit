@@ -50,7 +50,7 @@ const navItems = [
 const nestedNavItems = [
   { href: "/dashboard", icon: UserRoundPen, label: "Dashboard" },
   { href: "/hub", icon: Store, label: "Vendors" },
-  { href: "/entertainers", icon: Mic, label: "Entertainers" },
+  { href: "/talent", icon: Mic, label: "Entertainers" },
 ];
 
 const footerNavItems = [
