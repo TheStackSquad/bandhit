@@ -1,64 +1,35 @@
-//src/components/UI/signupComponent/SocialSignUpForm.jsx
-
+//src/components/signupComponents/SocialSignUpForm.jsx
 'use client';
 
 import React from 'react';
+import { Facebook, Twitter, Linkedin, Mail } from 'lucide-react'; // Lightweight Next.js friendly icons
 
 const SOCIAL_BUTTONS = [
-  { name: 'Twitter', icon: '𝕏', bgColor: 'bg-black' },
-  { name: 'Facebook', icon: 'f', bgColor: 'bg-blue-600' },
-  { name: 'LinkedIn', icon: 'in', bgColor: 'bg-blue-700' },
-  { name: 'Gmail', icon: 'G', bgColor: 'bg-red-700' },
+  { name: 'Twitter', icon: Twitter, bgColor: 'bg-black' },
+  { name: 'Facebook', icon: Facebook, bgColor: 'bg-blue-600' },
+  { name: 'LinkedIn', icon: Linkedin, bgColor: 'bg-blue-700' },
+  { name: 'Google', icon: Mail, bgColor: 'bg-red-600' },
 ];
 
 const SocialSignUpForm = () => {
- 
   return (
-    <div className="w-full bg-blue max-w-md mx-auto">
-      {/* Container for the buttons with responsive grid/flex layout */}
-      <div className="grid grid-cols-2 gap-4 md:flex md:flex-col">
-        {SOCIAL_BUTTONS.map(({ name, icon, bgColor }) => (
+    <div className="w-[80%] max-w-lg mx-auto">
+      {/* Responsive 1-column (xs) -> 2-column (md & lg) grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {SOCIAL_BUTTONS.map(({ name, icon: Icon, bgColor }) => (
           <button
             key={name}
-            // Base styles
             className={`
-              ${bgColor}
-              w-full
-              rounded-full
-              px-3
-              py-3
-              text-white 
-              font-medium
-              
-              // Stack icon and text on all screen sizes
-              flex
-              flex-col
-              items-center
-              gap-2
-              
-              // Hover and focus states
-              hover:opacity-90
-              focus:outline-none
-              focus:ring-2
-              focus:ring-offset-2
-              focus:ring-blue-500
-              
-              // Shadow to make it appear elevated
-              shadow-lg
-              
-              // Animation for click effect
-              transition-all
-              duration-200
-              active:transform
-              active:scale-95
-              active:shadow-md
+              ${bgColor} text-white font-medium 
+              flex items-center justify-center gap-3 
+              w-full py-3 rounded-lg shadow-lg
+              transition-all duration-200 
+              hover:opacity-90 active:scale-95 
+              focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400
             `}
           >
-            {/* Icon with larger size */}
-            <span className="text-xl">{icon}</span>
-            
-            {/* Button text */}
-            <span>{name}</span>
+            <Icon className="w-5 h-5" /> {/* Icon size optimized */}
+            <span className="text-sm">{name}</span>
           </button>
         ))}
       </div>

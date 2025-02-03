@@ -12,7 +12,6 @@ import {
   Layers,
   Phone,
   Book,
-  //eslint-disable-next-line
   ShoppingCart,
   Users,
   Store,
@@ -20,8 +19,8 @@ import {
   UserRoundPen,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useSelector } from 'react-redux';
 
-import AnimatedCartIcon from '@/components/motion/animatedIcon';
 // Modified animation variants for vertical staggering
 const dropdownVariants = {
   hidden: { opacity: 0, y: -10 },
@@ -65,6 +64,9 @@ export default function Dropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const [nestedOpen, setNestedOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const cartItems = useSelector((state) => state.cart.items);
+  const [count, setCount] = useState(0);
+
 
   const handleClickOutside = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -77,6 +79,39 @@ export default function Dropdown() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  
+  useEffect(() => {
+    // First, immediately update count from Redux state
+    if (Array.isArray(cartItems)) {
+      setCount(cartItems.length);
+    }
+
+    // Then verify against localStorage for consistency
+    const verifyCount = () => {
+      const cartData = localStorage.getItem("persist:cart");
+      
+      if (cartData) {
+        try {
+          const parsedCart = JSON.parse(cartData);
+          const itemsArray = parsedCart.items ? JSON.parse(parsedCart.items) : [];
+          
+          // Only update if there's a mismatch with Redux state
+          if (itemsArray.length !== cartItems.length) {
+            console.warn('Cart count mismatch detected. Syncing with localStorage.');
+            setCount(itemsArray.length);
+          }
+        } catch (error) {
+          console.error("Error verifying cart count:", error);
+        }
+      }
+    };
+
+    // Verify after a short delay to ensure localStorage is updated
+    const timeoutId = setTimeout(verifyCount, 100);
+    
+    return () => clearTimeout(timeoutId);
+  }, [cartItems]); // Depend on Redux state changes
 
   const handleItemClick = () => {
     setIsOpen(false);
@@ -102,9 +137,20 @@ export default function Dropdown() {
   return (
     <div className="relative" ref={dropdownRef}>
       <div className="flex items-center gap-4">
-      <Link href="/checkout">
-        <AnimatedCartIcon />
-      </Link>
+     
+      <Link href="/checkout" className="relative">
+      <ShoppingCart 
+        className={`w-6 h-6 transition-colors duration-200 ${
+          count > 0 ? 'text-blue-600' : 'text-gray-400'
+        }`} 
+      />
+      {count > 0 && (
+        <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-fade-in">
+          {count}
+        </div>
+      )}
+    </Link>
+
 
         <button
           className="flex items-center gap-2 px-4 py-2 text-white bg-blue-600 rounded-md shadow-md focus:outline-none hover:bg-blue-700 hover:shadow-lg transform hover:translate-y-[-2px] transition-all duration-200 focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
