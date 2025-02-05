@@ -27,7 +27,7 @@ const events = [
     name: "Food & Wine Expo",
     date: "August 5, 2024",
     location: "Oluyole, Ibadan",
-    image: "/uploads/welcomeAsset/techsummit_5_11zon.webp",
+    image: "/uploads/welcomeAsset/foodWine_11zon.webp",
   },
   {
     id: 4,
