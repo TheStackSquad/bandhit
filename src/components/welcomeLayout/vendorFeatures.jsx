@@ -36,33 +36,32 @@ const VendorFeatures = () => {
           For Vendors & Entertainers – Elevate Your Reach
         </h2>
   
-        {/* Vendor Spotlight */}
-        <div className="flex flex-wrap justify-center gap-6 px-4 mb-12">
-  {vendors.map((vendor) => (
-    <div
-      key={vendor.id}
-      className="flex flex-col items-center p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer"
-    >
-      {/* Fix: Wrap Image in a relative container */}
-      <div className="relative w-24 h-24 mb-4">
-  <Image
-    src={vendor.image}
-    alt={vendor.name}
-    fill
-    priority
-    sizes="(max-width: 640px) 96px, (max-width: 1024px) 128px, 150px"
-    className="rounded-full object-cover"
-  />
-</div>
-
-
-      <h3 className="text-xl font-semibold">{vendor.name}</h3>
-      <p className="text-sm text-gray-600">{vendor.service}</p>
-      <p className="text-yellow-500 mt-2">{vendor.rating}</p>
+        <div className="w-full px-4 mb-12">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+        {vendors.map((vendor) => (
+          <div
+            key={vendor.id}
+            className="w-full bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer flex flex-col items-center p-6 min-h-[250px]"
+          >
+            <div className="relative w-24 h-24 mb-4 flex-shrink-0">
+              <Image
+                src={vendor.image}
+                alt={vendor.name}
+                fill
+                priority
+                sizes="(max-width: 640px) 96px, (max-width: 1024px) 128px, 150px"
+                className="rounded-full object-cover border-2 border-gray-100"
+              />
+            </div>
+            <div className="flex flex-col items-center flex-grow">
+              <h3 className="text-xl font-semibold text-center line-clamp-1">{vendor.name}</h3>
+              <p className="text-sm text-gray-600 text-center mt-2 line-clamp-2">{vendor.service}</p>
+              <p className="text-yellow-500 mt-auto pt-4">{vendor.rating}</p>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
-  ))}
-</div>
-
   
         {/* How It Works */}
         <div className="max-w-3xl mx-auto mb-12 px-4">

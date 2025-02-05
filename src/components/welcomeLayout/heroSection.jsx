@@ -1,22 +1,51 @@
-//src/components/welcomeLayout/heroSection.jsx
+//src/components/welcomeLayout/heroSection
+
 'use client';
 
+import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { containVariants, textVariants, buttonVariants } from "@/components/motion/animations";
 
+const NavButtons = () => {
+  const buttonData = [
+    { text: "Find Tickets", path: "/categories", color: "bg-blue-600 hover:bg-blue-700" },
+    { text: "Sign Up", path: "/signup", color: "bg-green-600 hover:bg-green-700" },
+    { text: "Sign In", path: "/signin", color: "bg-purple-600 hover:bg-purple-700" },
+    { text: "Explore Vendors & Entertainers", path: "/vendors", color: "bg-orange-600 hover:bg-orange-700" }
+  ];
+
+  return (
+    <motion.div className="flex flex-col md:flex-row gap-4 justify-center variants={containVariants} ">
+      {buttonData.map(({ text, path, color }, index) => (
+        <motion.div key={index} variants={buttonVariants} initial="hidden" animate="visible">
+          <Link href={path}>
+            <motion.button 
+              className={`text-white py-3 px-6 rounded-lg transition duration-300 transform hover:scale-105 ${color}`}
+              whileHover={{ scale: 1.1 }}
+            >
+              {text}
+            </motion.button>
+          </Link>
+        </motion.div>
+      ))}
+    </motion.div>
+  );
+};
+
 const HeroSection = () => {
   return (
     <motion.div 
-      className="relative h-screen flex items-center justify-center text-center overflow-hidden"
-      variants={containVariants}
-      initial="hidden"
-      animate="visible"
-    >
+    className="relative h-screen flex items-center justify-center text-center overflow-hidden"
+    variants={containVariants}
+    initial="hidden"
+    animate="visible"
+  >
+    <div className="relative h-screen flex items-center justify-center text-center overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="/uploads/welcomeAsset/gabby_11zon.webp"
+           src="/uploads/welcomeAsset/gabby_11zon.webp"
           alt="Event Background"
           fill
           className="object-cover"
@@ -27,34 +56,22 @@ const HeroSection = () => {
       </div>
 
       {/* Content */}
-      <motion.div className="relative z-10 text-white px-4">
+      <div className="relative z-10 text-white px-4">
         {/* Tagline */}
         <motion.h1 
-          className="text-3xl md:text-6xl font-bold mb-6"
+          className="text-4xl md:text-6xl font-bold mb-6"
           variants={textVariants}
+          initial="hidden"
+          animate="visible"
         >
           Your Event, Our Expertise – <br />
           Book Tickets, Find Vendors, and Elevate Your Experience.
         </motion.h1>
 
-        {/* CTAs */}
-        <motion.div className="flex flex-col md:flex-row gap-4 justify-center" variants={containVariants}>
-          {["Find Tickets", "Sign Up", "Sign In", "Explore Vendors & Entertainers"].map((text, index) => (
-            <motion.button 
-              key={index}
-              className={`py-3 px-6 rounded-lg text-white transition duration-300 transform hover:scale-105 ${
-                text === "Find Tickets" ? "bg-blue-600 hover:bg-blue-700" : 
-                text === "Sign Up" ? "bg-green-600 hover:bg-green-700" : 
-                text === "Sign In" ? "bg-purple-600 hover:bg-purple-700" : 
-                "bg-orange-600 hover:bg-orange-700"
-              }`}
-              variants={buttonVariants}
-            >
-              {text}
-            </motion.button>
-          ))}
-        </motion.div>
-      </motion.div>
+        {/* Call-to-Action Buttons */}
+        <NavButtons />
+      </div>
+    </div>
     </motion.div>
   );
 };
