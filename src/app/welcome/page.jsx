@@ -15,7 +15,7 @@ export const metadata = {
 
 export default function Welcome() {
   return (
-    <div className={`${josefin.variable} font-josefin`}>
+    <div className={`${josefin.variable} font-josefin bg-custom`}>
       {/* Hero Section */}
       <HeroSection />
 

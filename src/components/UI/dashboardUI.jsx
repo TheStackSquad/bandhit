@@ -1,12 +1,15 @@
 //src/components/UI/dashboard.jsx
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Formik, Form, Field } from "formik";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Camera } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from 'next/navigation';
+import { logoutAction } from '@/reduxStore/actions/authActions';
 import dashboardValidationSchema from "@/schemas/validationSchema/dashboardSchema";
+import ValidationModal from '@/components/modal/validationModal';
 
 import {
   getCoverImageContainerClass,
@@ -17,12 +20,24 @@ import {
 
 const DashboardUI = () => {
   const user = useSelector((state) => state.auth.user);
+  const dispatch = useDispatch();
+   const router = useRouter();
   // console.log('user state:', user);
   const [selectedImage, setSelectedImage] = useState(null);
   const [profileUploadStatus, setProfileUploadStatus] = useState("idle");
   const [coverUploadStatus, setCoverUploadStatus] = useState("idle");
-
+  //eslint-disable-next-line
   const [imageError, setImageError] = useState(false);
+
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const [modalState, setModalState] = useState({
+    show: false,
+    type: 'success',
+    message: ''
+  });
+
+//  const [imageError, setImageError] = useState(false);
 
   const [token, setToken] = useState(null);
   // Function to handle image load errors
@@ -77,6 +92,85 @@ const DashboardUI = () => {
     }
   };
 
+
+  // Handle modal closing and navigation
+  const handleModalClose = useCallback(() => {
+    setModalState(prev => ({ ...prev, show: false }));
+    
+    // Only navigate on successful logout
+    if (modalState.type === 'success') {
+      router.push('/events');
+    }
+  }, [router, modalState.type]);
+
+  // Clear all local storage items
+  const clearLocalStorage = useCallback(() => {
+    try {
+      localStorage.removeItem('auth');
+      localStorage.removeItem('persist:auth');
+      localStorage.removeItem('persist:cart');
+      return true;
+    } catch (error) {
+      console.error('Failed to clear localStorage:', error);
+      return false;
+    }
+  }, []);
+
+  // Main logout handler
+  const handleLogoutClick = async () => {
+    // Prevent multiple logout attempts
+    if (isLoggingOut) return;
+
+    try {
+      setIsLoggingOut(true);
+
+      // First try to clear localStorage
+      const storageCleared = clearLocalStorage();
+      if (!storageCleared) {
+        throw new Error('Failed to clear local storage');
+      }
+
+      // Then dispatch logout action to Redux
+      const logoutResult = await dispatch(logoutAction());
+      
+      // Check if logout was successful (adjust condition based on your Redux action)
+      if (!logoutResult) {
+        throw new Error('Logout action failed');
+      }
+
+      // Show success modal
+      setModalState({
+        show: true,
+        type: 'success',
+        message: 'You have successfully logged out of your account'
+      });
+
+    } catch (error) {
+      console.error('Logout failed:', error);
+      
+      // Show error modal
+      setModalState({
+        show: true,
+        type: 'error',
+        message: 'Failed to logout. Check your network settings and try again.'
+      });
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
+
+  // Auto-close success modal after delay
+  useEffect(() => {
+    if (modalState.show && modalState.type === 'success') {
+      const timer = setTimeout(() => {
+        handleModalClose();
+      }, 2000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [modalState.show, modalState.type, handleModalClose]);
+
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       const authData = localStorage.getItem("auth");
@@ -88,46 +182,75 @@ const DashboardUI = () => {
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       {/* User Profile Section */}
+      <>
+      <div className="container mx-auto mb-8 px-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between">
+          {/* Left Section: Profile Image and Welcome Message */}
+          <div className="flex items-center gap-4 relative w-full sm:w-auto">
+            {/* Profile Image Container with Camera Icon */}
+            <div className="relative">
+              <div className={getProfileImageContainerClass(profileUploadStatus)}>
+                <Image
+                  src={
+                    user?.profileImage?.url && !user.imageError
+                      ? user.profileImage.url
+                      : defaultImagePath
+                  }
+                  alt={`Profile picture of ${user?.name || 'User'}`}
+                  width={64}
+                  height={64}
+                  style={{
+                    maxWidth: '100%',
+                    height: '100%',
+                  }}
+                  className="object-cover w-16 h-16 rounded-full"
+                  onError={handleImageError}
+                  onLoad={handleImageLoad}
+                  priority
+                />
+              </div>
+              <label
+                htmlFor="profileImageUpload"
+                className="absolute -right-2 bottom-0 bg-blue-500 rounded-full p-1 cursor-pointer hover:bg-blue-600 transition-colors"
+              >
+                <Camera size={16} className="text-white" />
+              </label>
+              <input
+                type="file"
+                id="profileImageUpload"
+                accept="image/*"
+                className="hidden"
+                onChange={handleProfileImageChange}
+              />
+            </div>
+            
+            {/* Welcome Message */}
+            <h2 className="text-2xl font-semibold text-gray-800">
+              Welcome, {user?.name || 'User'}
+            </h2>
+          </div>
 
-      <div className="relative container mx-auto mb-8 flex items-center gap-4">
-        <div className={getProfileImageContainerClass(profileUploadStatus)}>
-          <Image
-            src={
-              !imageError && user?.profileImage?.url
-                ? user.profileImage.url
-                : defaultImagePath
-            }
-            alt={`Profile picture of ${user?.name || "User"}`}
-            width={64}
-            height={64}
-            style={{
-              maxWidth: "100%",
-              height: "100%",
-            }}
-            className="object-cover w-16 h-16 rounded-full"
-            onError={handleImageError}
-            onLoad={handleImageLoad}
-            priority // Prioritize loading for above-the-fold image
-          />
+          {/* Right Section: Logout Button */}
+          <button
+            onClick={handleLogoutClick}
+            disabled={isLoggingOut}
+            className={`${
+              isLoggingOut ? 'bg-gray-400' : 'bg-red-500 hover:bg-red-600'
+            } text-white px-4 py-2 rounded transition-colors w-full sm:w-auto`}
+          >
+            {isLoggingOut ? 'Logging out...' : 'Logout'}
+          </button>
         </div>
-
-        <label
-          htmlFor="profileImageUpload"
-          className="absolute bottom-0 left-0 bg-blue-500 rounded-full p-1 cursor-pointer hover:bg-blue-600"
-        >
-          <Camera size={16} className="text-white" />
-        </label>
-        <input
-          type="file"
-          id="profileImageUpload"
-          accept="image/*"
-          className="hidden"
-          onChange={handleProfileImageChange}
-        />
-        <h2 className="text-2xl font-semibold text-gray-800">
-          Welcome, {user?.name || "User"}
-        </h2>
       </div>
+
+      {/* Logout Success Modal */}
+       <ValidationModal
+        isOpen={modalState.show}
+        type={modalState.type}
+        message={modalState.message}
+        onClose={handleModalClose}
+      />
+    </>
 
       {/* Main Content */}
       <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">

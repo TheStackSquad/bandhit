@@ -71,3 +71,7 @@ body {
 .banner-btn {
   background-color: orange;
 }
+
+.bg-custom {
+  background-color: rgba(41, 180, 227, 0.35);
+}

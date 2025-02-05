@@ -12,7 +12,7 @@ const NavButtons = () => {
     { text: "Find Tickets", path: "/categories", color: "bg-blue-600 hover:bg-blue-700" },
     { text: "Sign Up", path: "/signup", color: "bg-green-600 hover:bg-green-700" },
     { text: "Sign In", path: "/signin", color: "bg-purple-600 hover:bg-purple-700" },
-    { text: "Explore Vendors & Entertainers", path: "/vendors", color: "bg-orange-600 hover:bg-orange-700" }
+    { text: "Explore Vendors & Entertainers", path: "/hub", color: "bg-orange-500 hover:bg-orange-900" }
   ];
 
   return (
