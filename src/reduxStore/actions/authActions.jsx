@@ -18,9 +18,13 @@ export const signIn = (user) => ({
   payload: user
 });
 
-export const signOut = () => ({
-  type: SIGN_OUT
+export const logoutAction = () => ({
+  type: SIGN_OUT,
 });
+
+// export const signOut = () => ({
+//   type: SIGN_OUT
+// });
 
 export const createEvent = (formData, token) => async (dispatch) => {
   // console.log("EVENTS before sending:", formData, token);
@@ -135,5 +139,4 @@ export const updateProfileImage = (formData, token) => async (dispatch) => {
     throw error;
   }
 };
-
 
