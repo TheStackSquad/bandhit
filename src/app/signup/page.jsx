@@ -1,5 +1,5 @@
 // src/app/components/UI/page.jsx
-import { josefin } from '../fonts';
+
 import SignupUI from '@/components/UI/signUp';
 
 export const metadata = {
@@ -9,7 +9,7 @@ export const metadata = {
 
 export default function SignUpPage() {
   return (
-    <main className={`min-h-screen ${josefin.variable} font-josefin`}>
+    <main className={`min-h-screen`}>
       < SignupUI />
     </main>
   );

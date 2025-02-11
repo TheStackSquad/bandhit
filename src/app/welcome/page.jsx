@@ -1,7 +1,6 @@
 // src/app/welcome/page.jsx
 //'use client';
 
-import { josefin } from '@/app/fonts';
 import HeroSection from '@/components/welcomeLayout/heroSection';
 import EventShowcase from '@/components/welcomeLayout/eventShowcase';
 import AttendeeFeatures from '@/components/welcomeLayout/attendeeFeatures';
@@ -15,7 +14,7 @@ export const metadata = {
 
 export default function Welcome() {
   return (
-    <div className={`${josefin.variable} font-josefin bg-custom`}>
+    <div>
       {/* Hero Section */}
       <HeroSection />
 

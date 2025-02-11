@@ -1,9 +1,15 @@
+//src/components/UI/contactUI.jsx
 'use client';
 
 import React, { useState } from 'react';
-import { Mail, Phone, MapPin, Send, User, MessageCircle } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, User, MessageCircle, Loader2 } from 'lucide-react';
+import { submitContactForm } from '@/utils/contactUtils';
+import { showSuccess, showError } from '@/utils/alertManager';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ContactUI = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -19,14 +25,26 @@ const ContactUI = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Implement form submission logic
-  //  console.log('Form submitted:', formData);
+    if (isSubmitting) return; // Prevent double submission
+    
+    setIsSubmitting(true);
+    try {
+      await submitContactForm(formData);
+      showSuccess('Message sent successfully!');
+      setFormData({ name: '', email: '', phone: '', message: '' });
+    } catch (error) {
+      console.error('check contactUI handle submit function:', error);
+      showError('Failed to send message. Please try again later.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 text-white py-16">
+      <ToastContainer />
       <div className="container mx-auto px-4 lg:px-8">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           {/* Contact Information */}
@@ -37,21 +55,21 @@ const ContactUI = () => {
                 <Mail className="text-yellow-400 w-6 h-6" />
                 <div>
                   <p className="text-sm text-gray-400">Email</p>
-                  <a href="mailto:support@bandhit.com" className="hover:text-yellow-300">support@bandhit.com</a>
+                  <a href="mailto:support@bandhit.com" className="hover:text-yellow-300">desheye@bandhit.com</a>
                 </div>
               </div>
               <div className="flex items-center gap-4">
                 <Phone className="text-yellow-400 w-6 h-6" />
                 <div>
                   <p className="text-sm text-gray-400">Phone</p>
-                  <a href="tel:+1234567890" className="hover:text-yellow-300">+1 (234) 567-890</a>
+                  <a href="tel:+1234567890" className="hover:text-yellow-300">+(234) 8167-118379</a>
                 </div>
               </div>
               <div className="flex items-center gap-4">
                 <MapPin className="text-yellow-400 w-6 h-6" />
                 <div>
                   <p className="text-sm text-gray-400">Address</p>
-                  <p>123 Event Street, Entertainment City</p>
+                  <p>123 Kareem Adegbite Drv - Lekki Peninsula</p>
                 </div>
               </div>
             </div>
@@ -73,7 +91,8 @@ const ContactUI = () => {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full pl-10 pr-4 py-3 rounded-lg bg-slate-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-yellow-400 outline-none"
+                  disabled={isSubmitting}
+                  className="w-full pl-10 pr-4 py-3 rounded-lg bg-slate-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-yellow-400 outline-none disabled:opacity-50"
                 />
               </div>
               <div className="relative">
@@ -85,7 +104,8 @@ const ContactUI = () => {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full pl-10 pr-4 py-3 rounded-lg bg-slate-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-yellow-400 outline-none"
+                  disabled={isSubmitting}
+                  className="w-full pl-10 pr-4 py-3 rounded-lg bg-slate-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-yellow-400 outline-none disabled:opacity-50"
                 />
               </div>
               <div className="relative">
@@ -96,7 +116,8 @@ const ContactUI = () => {
                   placeholder="Your Phone Number"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-3 rounded-lg bg-slate-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-yellow-400 outline-none"
+                  disabled={isSubmitting}
+                  className="w-full pl-10 pr-4 py-3 rounded-lg bg-slate-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-yellow-400 outline-none disabled:opacity-50"
                 />
               </div>
               <div className="relative">
@@ -107,16 +128,27 @@ const ContactUI = () => {
                   value={formData.message}
                   onChange={handleChange}
                   required
+                  disabled={isSubmitting}
                   rows={4}
-                  className="w-full pl-10 pr-4 py-3 rounded-lg bg-slate-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-yellow-400 outline-none"
+                  className="w-full pl-10 pr-4 py-3 rounded-lg bg-slate-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-yellow-400 outline-none disabled:opacity-50"
                 ></textarea>
               </div>
               <button
                 type="submit"
-                className="w-full bg-yellow-400 text-black py-3 rounded-lg hover:bg-yellow-500 transition-colors flex items-center justify-center gap-2"
+                disabled={isSubmitting}
+                className="w-full bg-yellow-400 text-black py-3 rounded-lg hover:bg-yellow-500 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <Send className="w-5 h-5" />
-                Send Message
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-5 h-5" />
+                    Send Message
+                  </>
+                )}
               </button>
             </div>
           </form>
