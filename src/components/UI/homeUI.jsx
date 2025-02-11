@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { novaFlat } from '@/app/fonts';
+
 
 
 const HomePage = () => {
@@ -53,7 +53,7 @@ const HomePage = () => {
     <div className="fixed inset-0  overflow-hidden">
       <AnimatePresence>
         <motion.h1
-          className={`${novaFlat.variable} font-nova-flat fixed left-1/2 top-1/2 text-7xl font-bold text-white tracking-wider`}
+          className={` fixed left-1/2 top-1/2 text-7xl font-bold text-white tracking-wider header-font`}
           variants={textVariants}
           initial="initial"
           animate="animate"

@@ -1,5 +1,4 @@
 // src/app/categories/page.jsx
-import { josefin } from '../fonts';
 import CategoryUI from '@/components/UI/categoryUI';
 
 export const metadata = {
@@ -9,7 +8,7 @@ export const metadata = {
 
 export default function CategoriesPage() {
   return (
-    <main className={`min-h-screen bg-gradient-to-b from-gray-50 to-white ${josefin.variable} font-josefin`}>
+    <main className={`min-h-screen bg-gradient-to-b from-gray-50 to-white`}>
       <CategoryUI />
     </main>
   );

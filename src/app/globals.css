@@ -3,16 +3,28 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: josefin;
-  src: url(../Fontz/JosefinSans-Regular.woff2);
+  font-family: "Zefani";
+  src: url("../fonts/ZefaniStencil_uppercase_-Regular.woff") format("woff2");
+  font-display: swap;
 }
 
+@font-face {
+  font-family: "roboto";
+  src: url("../fonts/RobotoSlab-Regular.woff") format("woff2");
+  font-display: swap;
+}
 
+/* @font-face {
+  font-family: "RobotoRegular";
+  src: url("../fonts/RobotoSlab-Regular.woff") format("woff2");
+  font-display: swap;
+} */
 :root {
   --bgColor: rgb(41, 180, 227);
   --foreground: #171717;
-  --fontFamily: josefin;
-  --font-josefin: 'Josefin Sans', sans-serif;
+  --font-roboto: 'roboto', sans-serif;
+ /* --text-roboto: 'RobotoRegular', sans-serif; */
+  --font-zefani: 'Zefani', serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -25,11 +37,17 @@
 body {
   color: var(--foreground);
   background: var(--bgColor);
-  font-family: var(--fontFamily);
+  font-family: var(--font-roboto); /* Default font */
 }
-.eventsUI{
-  font-family: var(--fontFamily);
+
+/* Header font */
+.header-font {
+  font-family: var(--font-zefani);
 }
+
+/* .text-font {
+  font-family: var(--text-roboto);
+} */
 
 // Add this to your global CSS file
 .hide-scrollbar {
