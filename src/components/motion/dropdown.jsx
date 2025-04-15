@@ -13,6 +13,7 @@ import {
   Phone,
   Book,
   ShoppingCart,
+  User,
   Users,
   Store,
   Mic,
@@ -42,6 +43,7 @@ const itemVariants = {
 const navItems = [
   { href: "/", icon: HomeIcon, label: "Home" },
   { href: "/events", icon: Calendar, label: "Events" },
+  { href: "/create_profile", icon: User, label: "Profile" },
   { href: "/categories", icon: Layers, label: "Categories" },
   { href: "/blog", icon: Book, label: "Blog" },
   { href: "/bookings", icon: Bookmark, label: "My Bookings" },
@@ -50,7 +52,7 @@ const navItems = [
 const nestedNavItems = [
   { href: "/dashboard", icon: UserRoundPen, label: "Dashboard" },
   { href: "/hub", icon: Store, label: "Vendors" },
-  { href: "/talent", icon: Mic, label: "Showcase" },
+  { href: "/reel", icon: Mic, label: "Reel" },
 ];
 
 const footerNavItems = [
@@ -80,7 +82,7 @@ export default function Dropdown() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  
+
   useEffect(() => {
     // First, immediately update count from Redux state
     if (Array.isArray(cartItems)) {
@@ -90,12 +92,12 @@ export default function Dropdown() {
     // Then verify against localStorage for consistency
     const verifyCount = () => {
       const cartData = localStorage.getItem("persist:cart");
-      
+
       if (cartData) {
         try {
           const parsedCart = JSON.parse(cartData);
           const itemsArray = parsedCart.items ? JSON.parse(parsedCart.items) : [];
-          
+
           // Only update if there's a mismatch with Redux state
           if (itemsArray.length !== cartItems.length) {
             console.warn('Cart count mismatch detected. Syncing with localStorage.');
@@ -109,7 +111,7 @@ export default function Dropdown() {
 
     // Verify after a short delay to ensure localStorage is updated
     const timeoutId = setTimeout(verifyCount, 100);
-    
+
     return () => clearTimeout(timeoutId);
   }, [cartItems]); // Depend on Redux state changes
 
@@ -119,13 +121,13 @@ export default function Dropdown() {
   };
 
   const renderNavItem = ({ href, icon: Icon, label }) => (
-    <motion.li 
+    <motion.li
       key={href}
-      variants={itemVariants} 
+      variants={itemVariants}
       className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-100 transition-colors duration-200"
     >
-      <Link 
-        href={href} 
+      <Link
+        href={href}
         className="flex items-center gap-2 w-full text-gray-700 hover:text-blue-600"
         onClick={handleItemClick}
       >
@@ -137,19 +139,18 @@ export default function Dropdown() {
   return (
     <div className="relative" ref={dropdownRef}>
       <div className="flex items-center gap-4">
-     
-      <Link href="/checkout" className="relative">
-      <ShoppingCart 
-        className={`w-6 h-6 transition-colors duration-200 ${
-          count > 0 ? 'text-blue-600' : 'text-gray-400'
-        }`} 
-      />
-      {count > 0 && (
-        <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-fade-in">
-          {count}
-        </div>
-      )}
-    </Link>
+
+        <Link href="/checkout" className="relative">
+          <ShoppingCart
+            className={`w-6 h-6 transition-colors duration-200 ${count > 0 ? 'text-blue-600' : 'text-gray-400'
+              }`}
+          />
+          {count > 0 && (
+            <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-fade-in">
+              {count}
+            </div>
+          )}
+        </Link>
 
 
         <button
@@ -181,14 +182,14 @@ export default function Dropdown() {
               onClick={() => setNestedOpen(!nestedOpen)}
             >
               <div className="flex items-center gap-2 w-full text-gray-700 hover:text-blue-600 cursor-pointer">
-                <Users size={18} /> 
+                <Users size={18} />
                 <span>Vendors & Entertainers</span>
                 <ChevronDown
                   className={`ml-auto transition-transform duration-200 ${nestedOpen ? "rotate-180" : ""}`}
                   size={18}
                 />
               </div>
-              
+
               <AnimatePresence>
                 {nestedOpen && (
                   <motion.ul

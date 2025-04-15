@@ -1,35 +1,54 @@
-//src/components/signupComponents/SocialSignUpForm.jsx
-'use client';
+//src/components/UI/signupComponent/SocialSignUpForm.jsx
 
+'use client';
 import React from 'react';
-import { Facebook, Twitter, Linkedin, Mail } from 'lucide-react'; // Lightweight Next.js friendly icons
+import { Facebook, Mail, Loader2 } from 'lucide-react';
+import { useSocialAuth } from '@/context/socialAuthContext';
 
 const SOCIAL_BUTTONS = [
-  { name: 'Twitter', icon: Twitter, bgColor: 'bg-black' },
-  { name: 'Facebook', icon: Facebook, bgColor: 'bg-blue-600' },
-  { name: 'LinkedIn', icon: Linkedin, bgColor: 'bg-blue-700' },
-  { name: 'Google', icon: Mail, bgColor: 'bg-red-600' },
+  {
+    name: 'Facebook',
+    provider: 'facebook',
+    icon: Facebook,
+    bgColor: 'bg-blue-600'
+  },
+  {
+    name: 'Google',
+    provider: 'google',
+    icon: Mail,
+    bgColor: 'bg-red-600'
+  },
 ];
 
 const SocialSignUpForm = () => {
+  const { signInWithProvider, loadingProviders, error } = useSocialAuth();
+
+  const handleSocialSignIn = async (provider) => {
+    await signInWithProvider(provider);
+  };
+
   return (
-    <div className="w-[80%] max-w-lg mx-auto">
-      {/* Responsive 1-column (xs) -> 2-column (md & lg) grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {SOCIAL_BUTTONS.map(({ name, icon: Icon, bgColor }) => (
+    <div className="space-y-4">
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded relative" role="alert">
+          <span className="block sm:inline">{error}</span>
+        </div>
+      )}
+
+      <div className="flex flex-col space-y-3">
+        {SOCIAL_BUTTONS.map(({ name, provider, icon: Icon, bgColor }) => (
           <button
             key={name}
-            className={`
-              ${bgColor} text-white font-medium 
-              flex items-center justify-center gap-3 
-              w-full py-3 rounded-lg shadow-lg
-              transition-all duration-200 
-              hover:opacity-90 active:scale-95 
-              focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400
-            `}
+            onClick={() => handleSocialSignIn(provider)}
+            disabled={loadingProviders[provider]}
+            className={`${bgColor} text-white py-2 px-4 rounded-lg flex items-center justify-center space-x-2 hover:opacity-90 disabled:opacity-70`}
           >
-            <Icon className="w-5 h-5" /> {/* Icon size optimized */}
-            <span className="text-sm">{name}</span>
+            {loadingProviders[provider] ? (
+              <Loader2 className="animate-spin h-5 w-5" />
+            ) : (
+              <Icon className="h-5 w-5" />
+            )}
+            <span>{`Sign in with ${name}`}</span>
           </button>
         ))}
       </div>

@@ -1,20 +1,14 @@
-//src/reduxStore/reducers/cartReducer.jsx
+// src/reduxStore/reducers/cartReducer.jsx
 
 import {
   ADD_TO_CART,
   REMOVE_FROM_CART,
   CLEAR_CART,
-  LIKE_EVENT_SUCCESS,
-  LIKE_EVENT_FAILURE
 } from "@/reduxStore/constants/actionTypes";
 
 const initialState = {
   items: [],
-  likedEvents: [],
-  error: null,
 };
-
-
 
 const cartReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -27,26 +21,11 @@ const cartReducer = (state = initialState, action) => {
     case REMOVE_FROM_CART:
       return {
         ...state,
-        items: state.items.filter((item) => item._id !== action.payload),
+        items: state.items.filter((item) => item.id !== action.payload),
       };
 
     case CLEAR_CART:
       return initialState;
-
-    case LIKE_EVENT_SUCCESS:
-      if (state.likedEvents.includes(action.payload.eventId)) {
-        return state;
-      }
-      return {
-        ...state,
-        likedEvents: [...state.likedEvents, action.payload.eventId],
-      };
-
-    case LIKE_EVENT_FAILURE:
-      return {
-        ...state,
-        error: action.payload,
-      };
 
     default:
       return state;
@@ -54,3 +33,6 @@ const cartReducer = (state = initialState, action) => {
 };
 
 export default cartReducer;
+
+
+      

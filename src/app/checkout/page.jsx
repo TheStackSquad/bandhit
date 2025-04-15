@@ -1,7 +1,7 @@
 // src/app/checkout/page.jsx
 'use client';
 
-import CheckoutUI from '@/components/UI/checkoutUI';
+import CheckoutUI from '@/components/UI/checkoutLayout/checkoutUI';
 
 
 export default function Checkout() {

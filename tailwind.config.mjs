@@ -24,6 +24,16 @@ export default {
         600: "600",
         800: "800",
       },
+      transitionProperty: {
+        'height': 'height',
+        'spacing': 'margin, padding',
+      },
+    },
+  },
+  variants: {
+    extend: {
+      backgroundColor: ['hover', 'focus'],
+      textColor: ['hover', 'focus'],
     },
   },
   plugins: [],

@@ -1,30 +1,72 @@
+/* src/app/globals.css */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+
+/* Import Fonts */
+
 @font-face {
-  font-family: "Zefani";
-  src: url("../fonts/ZefaniStencil_uppercase_-Regular.woff") format("woff2");
+  font-family: 'JetBrainsMono-Regular';
+  src: url('/Fontz/JetBrainsMono-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'SpaceGrotesk-Regular';
+  src: url('/Fontz/SpaceGrotesk-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'RobotoSlab-Regular';
+  src: url('/Fontz/RobotoSlab-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "roboto";
-  src: url("../fonts/RobotoSlab-Regular.woff") format("woff2");
-  font-display: swap;
+  font-family: 'RobotoSlab-Medium';
+  src: url('/Fontz/RobotoSlab-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
 }
 
-/* @font-face {
-  font-family: "RobotoRegular";
-  src: url("../fonts/RobotoSlab-Regular.woff") format("woff2");
-  font-display: swap;
-} */
+@font-face {
+  font-family: 'RobotoSlab-Light';
+  src: url('/Fontz/RobotoSlab-Light.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'RobotoSlab-Black';
+  src: url('/Fontz/RobotoSlab-Black.woff') format('woff');
+  font-weight: 900;
+  font-style: normal;
+}
+
+/* Define CSS Variables for Fonts */
 :root {
+  --font-jetbrains-regular: 'JetBrainsMono-Regular', monospace;
+  --font-spacegrotesk-regular: 'SpaceGrotesk-Regular', sans-serif;
+  --font-robotoslab-regular: 'RobotoSlab-Regular', serif;
+  --font-robotoslab-medium: 'RobotoSlab-Medium', serif;
+  --font-robotoslab-light: 'RobotoSlab-Light', serif;
+  --font-robotoslab-black: 'RobotoSlab-Black', serif;
   --bgColor: rgb(41, 180, 227);
   --foreground: #171717;
   --font-roboto: 'roboto', sans-serif;
- /* --text-roboto: 'RobotoRegular', sans-serif; */
-  --font-zefani: 'Zefani', serif;
+
+  /* Custom Box Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -33,23 +75,40 @@
     --foreground: #ededed;
   }
 }
+/* Utility Classes for Fonts */
+.font-jetbrains-regular {
+  font-family: var(--font-jetbrains-regular);
+}
+
+.font-spacegrotesk-regular {
+  font-family: var(--font-spacegrotesk-regular);
+}
+
+.font-robotoslab-regular {
+  font-family: var(--font-robotoslab-regular);
+}
+
+.font-robotoslab-medium {
+  font-family: var(--font-robotoslab-medium);
+}
+
+.font-robotoslab-light {
+  font-family: var(--font-robotoslab-light);
+}
+
+.font-robotoslab-black {
+  font-family: var(--font-robotoslab-black);
+}
 
 body {
   color: var(--foreground);
   background: var(--bgColor);
-  font-family: var(--font-roboto); /* Default font */
+  font-family: var(--font-robotoslab-regular); /* Default font */
 }
 
-/* Header font */
-.header-font {
-  font-family: var(--font-zefani);
-}
 
-/* .text-font {
-  font-family: var(--text-roboto);
-} */
 
-// Add this to your global CSS file
+/* // Add this to your global CSS file */
 .hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -92,4 +151,54 @@ body {
 
 .bg-custom {
   background-color: rgba(41, 180, 227, 0.35);
+}
+
+
+/* Custom Box Shadows */
+.shadow-sm {
+  box-shadow: var(--shadow-sm);
+}
+
+.shadow-md {
+  box-shadow: var(--shadow-md);
+}
+
+.shadow-lg {
+  box-shadow: var(--shadow-lg);
+}
+
+.shadow-xl {
+  box-shadow: var(--shadow-xl);
+}
+
+
+/* src/styles/animations.css */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.animate-slideUp {
+  animation: slideUp 0.4s ease-out;
 }

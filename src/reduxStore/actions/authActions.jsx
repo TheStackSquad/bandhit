@@ -3,6 +3,12 @@ import axios from 'axios'
 
 import { SIGN_IN,
   SIGN_OUT,
+  UPDATE_ARTIST_PROFILE_REQUEST,
+  UPDATE_ARTIST_PROFILE_SUCCESS,
+  UPDATE_ARTIST_PROFILE_FAILURE,
+  UPDATE_VENDOR_PROFILE_REQUEST,
+  UPDATE_VENDOR_PROFILE_SUCCESS,
+  UPDATE_VENDOR_PROFILE_FAILURE,
 CREATE_EVENT_REQUEST,
 CREATE_EVENT_SUCCESS,
 CREATE_EVENT_FAILURE,
@@ -22,9 +28,55 @@ export const logoutAction = () => ({
   type: SIGN_OUT,
 });
 
-// export const signOut = () => ({
-//   type: SIGN_OUT
-// });
+// Artist Profile Action Creator
+export const updateArtistProfile = (profileData) => async (dispatch) => {
+  dispatch({ type: UPDATE_ARTIST_PROFILE_REQUEST });
+
+  try {
+    const response = await axios.post('/api/profile/artist', profileData);
+
+    dispatch({
+      type: UPDATE_ARTIST_PROFILE_SUCCESS,
+      payload: response.data.data,
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Artist profile update error:", error);
+    
+    dispatch({
+      type: UPDATE_ARTIST_PROFILE_FAILURE,
+      payload: error.response?.data?.message || 'Artist profile update failed',
+    });
+    
+    throw error;
+  }
+};
+
+// Vendor Profile Action Creator
+export const updateVendorProfile = (profileData) => async (dispatch) => {
+  dispatch({ type: UPDATE_VENDOR_PROFILE_REQUEST });
+
+  try {
+    const response = await axios.post('/api/profile/vendor', profileData);
+
+    dispatch({
+      type: UPDATE_VENDOR_PROFILE_SUCCESS,
+      payload: response.data.data,
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Vendor profile update error:", error);
+    
+    dispatch({
+      type: UPDATE_VENDOR_PROFILE_FAILURE,
+      payload: error.response?.data?.message || 'Vendor profile update failed',
+    });
+    
+    throw error;
+  }
+};
 
 export const createEvent = (formData, token) => async (dispatch) => {
   // console.log("EVENTS before sending:", formData, token);

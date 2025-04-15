@@ -1,7 +1,6 @@
 //src/app/layout.js
 import Providers from "@/app/provider";
-import Header from '@/components/Header';
-import { roboto, zefani } from '@/app/fonts';
+import Header from '@/components/UI/homeLaout/Header';
 import "./globals.css";
 
 export const metadata = {
@@ -41,8 +40,8 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${roboto.variable} ${zefani.variable}`}>
-      <body>
+    <html lang="en">
+    <body className="font-robotoslab-regular">
         <Providers>
           <Header />
           {children}

@@ -1,11 +1,11 @@
 // src/app/welcome/page.jsx
 //'use client';
 
-import HeroSection from '@/components/welcomeLayout/heroSection';
-import EventShowcase from '@/components/welcomeLayout/eventShowcase';
-import AttendeeFeatures from '@/components/welcomeLayout/attendeeFeatures';
-import VendorFeatures from '@/components/welcomeLayout/vendorFeatures';
-import Footer from '@/components/welcomeLayout/footer';
+import HeroSection from '@/components/UI/welcomeLayout/heroSection';
+import EventShowcase from '@/components/UI/welcomeLayout/eventShowcase';
+import AttendeeFeatures from '@/components/UI/welcomeLayout/attendeeFeatures';
+import VendorFeatures from '@/components/UI/welcomeLayout/vendorFeatures';
+import Footer from '@/components/UI/welcomeLayout/footer';
 
 export const metadata = {
   title: 'Welcome | Bandhit',

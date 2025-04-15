@@ -1,6 +1,6 @@
 // src/app/components/UI/page.jsx
 
-import SignupUI from '@/components/UI/signUp';
+import Signup from '@/components/UI/signupComponent/signUp';
 
 export const metadata = {
   title: 'Categories | Bandhit',
@@ -10,7 +10,7 @@ export const metadata = {
 export default function SignUpPage() {
   return (
     <main className={`min-h-screen`}>
-      < SignupUI />
+      < Signup />
     </main>
   );
 }

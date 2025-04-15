@@ -3,7 +3,7 @@ import { Server } from 'socket.io';
 
 export async function GET() {
   if (!globalThis._ioServer) {
-    console.log("Starting Socket.IO server...");
+//    console.log("Starting Socket.IO server...");
     
     const io = new Server({
       cors: { origin: "*" },
@@ -12,7 +12,7 @@ export async function GET() {
     });
 
     io.on("connection", (socket) => {
-      console.log("Client connected:", socket.id);
+     // console.log("Client connected:", socket.id);
       
       // Handle form submissions from dashboard
       socket.on("formSubmitted", (data) => {
@@ -21,7 +21,7 @@ export async function GET() {
       });
 
       socket.on("disconnect", () => {
-        console.log("Client disconnected:", socket.id);
+       // console.log("Client disconnected:", socket.id);
       });
     });
 
