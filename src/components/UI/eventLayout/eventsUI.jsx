@@ -1,59 +1,80 @@
-//src/components/UI/eventsUI.jsx
+// src/components/UI/eventsUI.jsx
 
 "use client";
 
-// ✅ Import Dependencies
+// React and state management imports
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useGetEventsQuery } from '@/reduxStore/api/eventsApi';
+
+// UI components and icons
 import { ChevronLeft, ChevronRight, ShoppingCart, CheckCircle, Check } from "lucide-react";
 import LikeButton from '@/components/UI/eventLayout/likeButton';
+import CloudinaryImage from '@/components/utilsDir/cloudinaryImage';
+
+// Actions and utilities
 import { loadVisibleEventLikes } from '@/reduxStore/actions/likeActions';
-import Image from "next/image";
-
-// ✅ Import Alert Management
 import { toast } from "@/lib/alertManager";
-
-// ✅ Import Utility Functions
 import {
   submitToCart,
-  // toggleLike,
-  // getOrCreateSessionId,
   HeroBanner
 } from "@/utils/eventUtils/eventsUtils";
 
-// ✅ Event Carousel Component
+// Main EventCarousel component
 export default function EventCarousel() {
+  // Redux state access
   const eventsFromRedux = useSelector((state) => state.event.events);
+  const { likedEvents, likesCount } = useSelector((state) => state.likes);
+  const dispatch = useDispatch();
+
+  // Local state initialization
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [selectedEvents, setSelectedEvents] = useState([]);
-  const dispatch = useDispatch();
-//  const [isLiked, setIsLiked] = useState(false);
+  const [events, setEvents] = useState([]);
+  const [mounted, setMounted] = useState(false);
 
-  const { likedEvents, likesCount } = useSelector((state) => state.likes);
+  // Get events from localStorage for fast initial loading
+  const getEventsFromLocalStorage = useCallback(() => {
+    if (typeof window === 'undefined') return [];
+    const persistData = localStorage.getItem('persist:events');
+    if (!persistData) return [];
 
-  // Function to handle selecting events
+    try {
+      const parsed = JSON.parse(persistData);
+      const events = JSON.parse(parsed.events);
+      return Array.isArray(events) ? events : [];
+    } catch (error) {
+      console.error('Error parsing events:', error);
+      return [];
+    }
+  }, []);
+
+  // Background sync with API
+  const { data: apiEvents, isSuccess } = useGetEventsQuery(undefined, {
+    refetchOnMountOrArgChange: false, // Don't show loading state
+    pollingInterval: 30 * 60 * 1000 // Refresh every 30 minutes
+  });
+
+  // Add event to selection or remove if already selected
   const handleClickedEvent = (eventDetails) => {
     if (!eventDetails || !dispatch) {
       console.warn("🚨 Missing eventDetails or dispatch function.");
       return;
     }
 
-    // Check if event is already selected
     const isAlreadySelected = selectedEvents.some(event => event.id === eventDetails.id);
 
     if (isAlreadySelected) {
-      // Remove from selection if already there
       setSelectedEvents(prev => prev.filter(event => event.id !== eventDetails.id));
       toast.info(`Removed "${eventDetails.event_name}" from selection`);
     } else {
-      // Add to selection
       setSelectedEvents(prev => [...prev, eventDetails]);
       toast.success(`Added "${eventDetails.event_name}" to selection`);
     }
   };
 
-  // Function to submit all selected events to cart
+  // Submit all selected events to cart
   const submitSelectedEvents = () => {
     if (selectedEvents.length === 0) {
       toast.info("No events selected");
@@ -65,28 +86,8 @@ export default function EventCarousel() {
     });
 
     toast.success(`Added ${selectedEvents.length} event(s) to cart`);
-
-    // Clear selection after submission
     setSelectedEvents([]);
   };
-
-
-  // Memoized events processing
-  const events = useMemo(() => {
-    if (!eventsFromRedux) return [];
-
-    // Parse events if they're in string format (from persist)
-    if (typeof eventsFromRedux === 'string') {
-      try {
-        return JSON.parse(eventsFromRedux);
-      } catch (parseError) {
-        // Log parse error without unused variable warning
-        console.error("Failed to parse events:", parseError);
-        return [];
-      }
-    }
-    return eventsFromRedux;
-  }, [eventsFromRedux]);
 
   // Default event when no events are available
   const defaultEvent = useMemo(() => ({
@@ -115,7 +116,7 @@ export default function EventCarousel() {
     return selectedEvents.some(event => event.id === currentEvent.id);
   }, [selectedEvents, currentEvent]);
 
-  // Navigation and carousel logic
+  // Navigation controls for carousel
   const nextSlide = useCallback(() => {
     if (!isPaused && events.length > 0) {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % events.length);
@@ -128,6 +129,37 @@ export default function EventCarousel() {
     }
   }, [events.length, isPaused]);
 
+  // Component initialization & localStorage loading
+  useEffect(() => {
+    setMounted(true);
+    const storedEvents = getEventsFromLocalStorage();
+    if (storedEvents.length > 0) setEvents(storedEvents);
+  }, [getEventsFromLocalStorage]);
+
+  // Update events from Redux store if available
+  useEffect(() => {
+    if (eventsFromRedux) {
+      // Parse events if they're in string format (from persist)
+      if (typeof eventsFromRedux === 'string') {
+        try {
+          setEvents(JSON.parse(eventsFromRedux));
+        } catch (parseError) {
+          console.error("Failed to parse events from Redux:", parseError);
+        }
+      } else if (Array.isArray(eventsFromRedux) && eventsFromRedux.length > 0) {
+        setEvents(eventsFromRedux);
+      }
+    }
+  }, [eventsFromRedux]);
+
+  // Update with fresh data when API responds
+  useEffect(() => {
+    if (isSuccess && apiEvents && apiEvents.length > 0) {
+      setEvents(apiEvents);
+    //  console.log('🔄 Updated events carousel from API:', { count: apiEvents.length });
+    }
+  }, [isSuccess, apiEvents]);
+
   // Automatic sliding effect
   useEffect(() => {
     if (!isPaused && events.length > 0) {
@@ -135,7 +167,6 @@ export default function EventCarousel() {
       return () => clearInterval(timer);
     }
   }, [isPaused, events.length, nextSlide]);
-
 
   // Load likes for visible events
   useEffect(() => {
@@ -145,6 +176,9 @@ export default function EventCarousel() {
     }
   }, [events, dispatch]);
 
+  // Skip rendering until mounted (prevents hydration issues)
+  if (!mounted) return null;
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8 bg-gray-50">
       <div className="flex flex-col">
@@ -153,16 +187,16 @@ export default function EventCarousel() {
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >
-          <Image
+          <CloudinaryImage
             src={currentEvent.imageUrl?.url || currentEvent.cover_image}
             alt={currentEvent.eventName || currentEvent.event_name}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 60vw"
-            className={`object-cover rounded-lg transition-transform duration-700 ease-in-out ${isCurrentEventSelected ? 'ring-4 ring-blue-500' : ''}`}
+            className={`relative object-cover rounded-lg transition-transform duration-700 ease-in-out ${isCurrentEventSelected ? 'ring-4 ring-blue-500' : ''}`}
             priority
           />
 
-          <div className="absolute inset-0 flex flex-col justify-end p-6 bg-gradient-to-t from-black/60 to-transparent text-white">
+          <div className="absolute inset-0 flex flex-col justify-end p-6 bg-gradient-to-t from-black/40 to-transparent text-white">
             <h3 className="text-2xl font-bold">{currentEvent.event_name || currentEvent.event_name}</h3>
             <p className="text-sm opacity-80">{new Date(currentEvent.date).toLocaleDateString()} - {currentEvent.time}</p>
             <p className="text-sm opacity-80">{currentEvent.venue}</p>

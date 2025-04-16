@@ -5,7 +5,7 @@ import { Eye, X } from "lucide-react"; // Importing icons
 import { useEffect, useState } from "react";
 import { validatePaymentForm } from "@/utils/otherUtils/feedbackValidation";
 import { submitPayment } from "@/utils/checkoutUtils/paymentUtils";
-import { PaymentConfirmationModal } from "./PaymentConfirmationModal";
+import { PaymentConfirmationModal } from "@/components/modal/paymentConfirmationModal";
 import { useDispatch } from "react-redux";
 import {
   clearCart as clearReduxCart,
