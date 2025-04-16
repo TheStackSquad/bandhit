@@ -2,7 +2,8 @@
 'use client';
 
 import { motion } from "framer-motion";
-import Image from "next/image";
+//import Image from "next/image";
+import CloudinaryImage from '@/components/utilsDir/cloudinaryImage';
 import { slideInFromRight, hoverScale } from "@/components/motion/animations";
 import { useSelector, useDispatch } from "react-redux";
 import { submitToCart } from "@/utils/eventUtils/eventShowcaseUtils";
@@ -50,7 +51,7 @@ const EventShowcase = () => {
                 whileHover={hoverScale}
               >
                 {/* Image Container */}
-                <div className="relative w-full h-48 flex justify-center items-center">
+                {/* <div className="relative w-full h-48 flex justify-center items-center">
                   {event?.cover_image ? (
                     <Image
                       src={event.cover_image}
@@ -62,6 +63,21 @@ const EventShowcase = () => {
                       onError={() => console.error("Failed to load image:", event.cover_image)} // Error handling
                     />
 
+                  ) : (
+                    <p className="text-gray-400">Image not available</p>
+                  )}
+                </div> */}
+
+                <div className="relative w-full h-48 flex justify-center items-center">
+                  {event?.cover_image ? (
+                    <CloudinaryImage
+                      src={event.cover_image}
+                      alt={event?.eventName || "Event Image"}
+                      className="object-contain rounded"
+                      priority
+                      objectFit="contain" // Using objectFit prop instead of className
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    />
                   ) : (
                     <p className="text-gray-400">Image not available</p>
                   )}
