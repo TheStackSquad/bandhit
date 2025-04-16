@@ -1,4 +1,4 @@
-// src/components/UI/Hub/Card.jsx - enhanced version
+// src/components/UI/hub/Card.jsx - enhanced version
 
 'use client';
 

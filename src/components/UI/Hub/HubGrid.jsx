@@ -1,7 +1,7 @@
-// src/components/UI/Hub/HubGrid.jsx
+// src/components/UI/hub/HubGrid.jsx
 
 import React, { useState } from 'react';
-import Card from './Card';
+import Card from '@/components/UI/hub/Card';
 import { Palette, Store, SortAsc, SortDesc, Filter, X } from 'lucide-react';
 
 const HubGrid = ({ data }) => {
