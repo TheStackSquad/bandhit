@@ -1,4 +1,4 @@
-//src/components/UI/HubHeader.jsx
+//src/components/UI/hub/HubHeader.jsx
 
 import React from 'react';
 
