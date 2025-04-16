@@ -25,6 +25,10 @@ export default function CloudinaryImage({
         setIsLoading(false);
     };
 
+    const handleLoad = () => {
+        setIsLoading(false);
+    };
+
     // For Cloudinary images, use our custom loader
     const isCloudinaryImage = src && typeof src === 'string' && src.includes('res.cloudinary.com');
 
@@ -59,7 +63,7 @@ export default function CloudinaryImage({
                         placeholder="blur"
                         blurDataURL={blurDataURL}
                         className={`transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
-                        onLoadingComplete={() => setIsLoading(false)}
+                        onLoad={handleLoad}
                         onError={handleError}
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         {...props}
@@ -87,7 +91,7 @@ export default function CloudinaryImage({
                     blurDataURL={blurDataURL}
                     className={`transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
                     style={{ objectFit }}
-                    onLoadingComplete={() => setIsLoading(false)}
+                    onLoad={handleLoad}
                     onError={handleError}
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     {...props}
@@ -116,7 +120,7 @@ export default function CloudinaryImage({
                 placeholder="blur"
                 blurDataURL={blurDataURL}
                 className={`transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
-                onLoadingComplete={() => setIsLoading(false)}
+                onLoad={handleLoad}
                 onError={handleError}
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 {...props}
