@@ -10,13 +10,6 @@ import LoadingScreen from "@/components/utilsDir/loadingUI";
 const HubPage = () => {
   const { data: profiles, isLoading, error, refetch } = useGetHubProfilesQuery();
 
-  // Detailed logging of what we receive
-  // console.log("Hub Page Render State:", {
-  //   profilesLoaded: profiles?.length || 0,
-  //   isLoading,
-  //   hasError: !!error
-  // });
-
   if (isLoading) return <LoadingScreen isProcessing={true} message="Loading profiles..." />;
 
   if (error) {
