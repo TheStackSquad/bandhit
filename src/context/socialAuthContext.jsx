@@ -72,30 +72,43 @@ export const SocialAuthProvider = ({ children }) => {
      */
     const signInWithProvider = async (provider) => {
         try {
-            // Update loading state for specific provider
             setLoadingProviders(prev => ({ ...prev, [provider]: true }));
             setError(null);
 
-            // Configure the redirect URL - use the exact category path
+            // Configure the redirect URL
             const redirectTo = `${window.location.origin}/categories`;
-            //eslint-disable-next-line
-            const { data, error } = await supabaseClient.auth.signInWithOAuth({
+
+            // Base config that works for both providers
+            const authConfig = {
                 provider: provider.toLowerCase(),
                 options: {
-                    redirectTo: redirectTo,
-                    // Important: Set this to false to ensure proper hash fragment handling
+                    redirectTo,
                     skipBrowserRedirect: false
                 }
-            });
+            };
 
-            if (error) {
-                throw error;
+            // Add Facebook-specific configuration
+            if (provider.toLowerCase() === 'facebook') {
+                authConfig.options = {
+                    ...authConfig.options,
+                    queryParams: {
+                        display: 'popup',
+                        auth_type: 'rerequest' // Forces re-authentication if previously denied
+                    }
+                };
             }
 
+            const { error } = await supabaseClient.auth.signInWithOAuth(authConfig);
+
+            if (error) throw error;
             return { success: true };
         } catch (err) {
             console.error(`Sign in with ${provider} error:`, err.message);
-            setError(err.message || `Failed to sign in with ${provider}`);
+            // User-friendly error for Facebook, raw error for others
+            setError(provider.toLowerCase() === 'facebook'
+                ? 'Facebook login failed. Please try again or use another method.'
+                : err.message || `Failed to sign in with ${provider}`
+            );
             return { success: false, message: err.message };
         } finally {
             setLoadingProviders(prev => ({ ...prev, [provider]: false }));
