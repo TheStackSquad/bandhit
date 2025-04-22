@@ -5,14 +5,12 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import DataDeletionPage from '@/components/UI/dataDeletion/data_deletion_page'
-import ConfirmationModal from '@/components/modal/confirmation_modal'
 
 export default function DataDeletePage() {
     const supabase = createClientComponentClient()
     const router = useRouter()
     const [user, setUser] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
-    const [isModalOpen, setIsModalOpen] = useState(false)
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -33,36 +31,17 @@ export default function DataDeletePage() {
         fetchUser()
     }, [supabase.auth, router])
 
-    const handleDeleteAccount = async () => {
+    const handleDataDeletion = async () => {
         try {
-            if (!user) return false
+            if (!user) return
 
-            // 1. Delete user data from all tables
-            const { error: profileError } = await supabase
-                .from('all_profiles')
-                .delete()
-                .eq('user_id', user.id)
+            // Add any additional pre-deletion logic here
+            console.log('Initiating data deletion for user:', user.id)
 
-            if (profileError) throw profileError
-
-            // 2. Delete auth user (requires service role key)
-            const response = await fetch('/api/delete-user', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ userId: user.id }),
-            })
-
-            if (!response.ok) {
-                throw new Error('Failed to delete user account')
-            }
-
-            // 3. Sign out
-            await supabase.auth.signOut()
+            // The actual deletion will be handled by the subcomponent
             return true
         } catch (error) {
-            console.error('Account deletion error:', error)
+            console.error('Data deletion preparation failed:', error)
             return false
         }
     }
@@ -76,26 +55,22 @@ export default function DataDeletePage() {
     }
 
     if (!user) {
-        return null // Redirect will happen automatically
+        return (
+            <div className="max-w-2xl mx-auto p-6 text-center">
+                <h1 className="text-3xl font-bold mb-4">Authentication Required</h1>
+                <p className="text-gray-600 mb-6">
+                    You must be logged in to delete your data. Redirecting to login page...
+                </p>
+            </div>
+        )
     }
 
     return (
         <div className="bg-gray-50 min-h-screen py-12">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <DataDeletionPage
-                    onDeleteInitiated={() => setIsModalOpen(true)}
+                    onDeleteInitiated={handleDataDeletion}
                     user={user}
-                />
-
-                <ConfirmationModal
-                    isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
-                    onConfirm={handleDeleteAccount}
-                    title="Confirm Account Deletion"
-                    message="This will permanently delete all your data. This action cannot be undone."
-                    confirmButtonText="Delete Forever"
-                    cancelButtonText="Cancel"
-                    isConfirmButtonDanger
                 />
             </div>
         </div>
