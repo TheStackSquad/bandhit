@@ -3,8 +3,8 @@
 'use client';
 
 import { useGetHubProfilesQuery } from "@/reduxStore/api/hubApi";
-import HubHeader from "@/components/UI/hub/HubHeader";
-import HubGrid from "@/components/UI/hub/HubGrid";
+import HubHeaderUI from "@/components/UI/hub/HubHeader";
+import HubGridLayout from "@/components/UI/hub/HubGrid";
 import LoadingScreen from "@/components/utilsDir/loadingUI";
 
 const HubPage = () => {
@@ -31,7 +31,7 @@ const HubPage = () => {
   if (!profiles || profiles.length === 0) {
     return (
       <main className="bg-gray-50 min-h-screen px-4">
-        <HubHeader />
+        <HubHeaderUI />
         <div className="flex flex-col items-center justify-center min-h-[50vh]">
           <p className="text-gray-500">No profiles found</p>
         </div>
@@ -41,8 +41,8 @@ const HubPage = () => {
 
   return (
     <main className="bg-gray-50 min-h-screen px-4">
-      <HubHeader />
-      <HubGrid data={profiles} />
+      <HubHeaderUI />
+      <HubGridLayout data={profiles} />
     </main>
   );
 };
