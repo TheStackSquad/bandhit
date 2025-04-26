@@ -1,4 +1,5 @@
 // src/reduxStore/api/likeApi.jsx
+
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const getBaseUrl = () => {
@@ -13,42 +14,49 @@ export const likeApi = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: getBaseUrl(),
         prepareHeaders: (headers) => {
-            headers.set('Cache-Control', 'no-cache'); // Prevent caching during development
+            headers.set('Cache-Control', 'no-cache');
             return headers;
         },
     }),
     tagTypes: ["Like"],
     endpoints: (builder) => ({
         getEventLikeStatus: builder.query({
-            query: ({ eventId, sessionId }) => `like?eventId=${eventId}&sessionId=${sessionId}`,
-            transformResponse: (response) => {
-            //    console.log("🔄 likeApi getEventLikeStatus response:", response);
-                return response; // Assuming the API route returns { eventId: ..., liked: ..., likesCount: ... }
+            query: (params) => {
+                if (!params?.eventId || !params?.sessionId) {
+                    throw new Error('Missing required parameters: eventId and sessionId');
+                }
+                return `like?eventId=${params.eventId}&sessionId=${params.sessionId}`;
             },
+            transformResponse: (response) => response,
             transformErrorResponse: (response) => {
                 console.error("❌ likeApi getEventLikeStatus error:", response);
                 return response;
             },
-            providesTags: (result, arg) =>
+            providesTags: (result, error, arg) => 
                 result ? [{ type: "Like", id: arg.eventId }] : ["Like"],
         }),
         toggleLikeEvent: builder.mutation({
-            query: ({ eventId, sessionId }) => ({
-                url: 'like',
-                method: 'POST',
-                body: { eventId, sessionId },
-            }),
-            transformResponse: (response) => {
-            //    console.log("🔄 likeApi toggleLikeEvent response:", response);
-                return response; // Assuming the API route returns { eventId: ..., liked: ..., likesCount: ... }
+            query: ({ eventId, sessionId }) => {
+                if (!eventId || !sessionId) {
+                    throw new Error('Missing required parameters: eventId and sessionId');
+                }
+                return {
+                    url: 'like',
+                    method: 'POST',
+                    body: { eventId, sessionId },
+                };
             },
+            transformResponse: (response) => response,
             transformErrorResponse: (response) => {
                 console.error("❌ likeApi toggleLikeEvent error:", response);
                 return response;
             },
-            invalidatesTags: ( arg) => [{ type: "Like", id: arg.eventId }],
+            invalidatesTags: (result, error, arg) => [{ type: "Like", id: arg.eventId }],
         }),
     }),
 });
 
-export const { useGetEventLikeStatusQuery, useToggleLikeEventMutation } = likeApi;
+export const { 
+    useGetEventLikeStatusQuery, 
+    useToggleLikeEventMutation 
+} = likeApi;
